@@ -9,9 +9,11 @@ import {LayerComponent} from './layer/layer.component';
 import {LayerEditComponent} from './layer/layer-edit.component';
 // import {ChatRoomComponent} from './chat/chat-room.component';
 import { RouterConfig, ROUTER_DIRECTIVES, provideRouter } from '@angular/router';
+import {MapComponent} from "./shared/map-component/map.component";
 
 const routes: RouterConfig = [
   { path: '', component: AppComponent },
+  { path: 'map', component: MapComponent },
   { path: 'monster', component: MonsterListComponent },
   { path: 'monster/edit', component: MonsterEditComponent },
   { path: 'monster/edit/:id', component: MonsterEditComponent },
@@ -20,6 +22,8 @@ const routes: RouterConfig = [
   { path: 'layer/edit', component: LayerEditComponent },
   { path: 'layer/edit/:id', component: LayerEditComponent },
   { path: 'layer/:id/:name', component: LayerComponent },
+
+  // { path: 'shared/map-component/', component: MapComponent },
   // { path: 'chat', component: ChatRoomComponent }
 
 ];

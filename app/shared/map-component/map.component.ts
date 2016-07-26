@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Directive,OnInit } from '@angular/core';
 
-import { MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import { GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
 
 
 // just an interface for type safety.
@@ -9,6 +9,7 @@ interface marker {
     lng: number;
     label?: string;
     draggable?: boolean;
+    icon?: string;
 }
 
 
@@ -16,6 +17,7 @@ interface marker {
     moduleId: module.id,
     selector: 'map',
     directives: [GOOGLE_MAPS_DIRECTIVES],
+    // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS],
     styles: [`
     .sebm-google-map-container {
        height: 300px;
@@ -58,6 +60,11 @@ interface marker {
 
 `
 })
+
+@Directive({
+    selector: 'map'
+})
+
 export class MapComponent implements OnInit {
     // google maps zoom level
     zoom: number = 8;

@@ -6,6 +6,7 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 import {MonsterService} from './monster/monster.service';
 import {ChatRoomService} from './chat/chat-room.service';
 import {LayerService} from './layer/layer.service';
+import {MapComponent} from "./shared/map-component/map.component";
 
 // import * as io from 'socket.io-client';
 
