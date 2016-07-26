@@ -34,7 +34,9 @@ export class LayerEditComponent implements OnInit {
                 this.layerToEdit = layer;
                 console.log('in edit, ajax returned : ',  this.layerToEdit,  this.frmLayer.controls );
                 (<FormControl>this.frmLayer.controls['name']).updateValue(layer.name);
-                (<FormControl>this.frmLayer.controls['power']).updateValue(layer.power);
+                (<FormControl>this.frmLayer.controls['locName']).updateValue(layer.locs);
+                // (<FormControl>this.frmLayer.controls['power']).updateValue(layer.locs);
+                // (<FormControl>this.frmLayer.controls['power']).updateValue(layer.power);
             });
         }
       });
@@ -54,7 +56,7 @@ export class LayerEditComponent implements OnInit {
               Validators.compose([Validators.required,
                                   Validators.minLength(3),
                                   Validators.maxLength(100)])],
-      power: [5, Validators.required]
+      locName: [5, Validators.required]
     });
   }
 }

@@ -19,7 +19,7 @@ const routes: RouterConfig = [
   { path: 'layer', component: LayerListComponent },
   { path: 'layer/edit', component: LayerEditComponent },
   { path: 'layer/edit/:id', component: LayerEditComponent },
-  { path: 'layer/:id/:name', component: LayerEditComponent },
+  { path: 'layer/:id/:name', component: LayerComponent },
   // { path: 'chat', component: ChatRoomComponent }
 
 ];
