@@ -16,8 +16,7 @@ import {LayerService} from './layer/layer.service';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.css'],
   encapsulation: ViewEncapsulation.None,
-<<<<<<< HEAD
-        providers: [MonsterService, ChatRoomService, LayerService, ToastsManager, {provide: 'io', useValue: io}]
+  providers: [MonsterService, ChatRoomService, LayerService, ToastsManager, {provide: 'io', useValue: io}]
 })
 export class AppComponent {
     title = 'google map\'s app';
