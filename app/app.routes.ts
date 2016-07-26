@@ -5,9 +5,13 @@ import {MonsterComponent} from './monster/monster.component';
 import {MonsterEditComponent} from './monster/monster-edit.component';
 // import {ChatRoomComponent} from './chat/chat-room.component';
 import { RouterConfig, ROUTER_DIRECTIVES, provideRouter } from '@angular/router';
+import {MapComponent} from "./shared/map-component/map.component";
+
+
 
 const routes: RouterConfig = [
   { path: '', component: AppComponent },
+  { path: 'map', component: MapComponent },
   { path: 'monster', component: MonsterListComponent },
   { path: 'monster/edit', component: MonsterEditComponent },
   { path: 'monster/edit/:id', component: MonsterEditComponent },
