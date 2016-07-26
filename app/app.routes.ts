@@ -3,6 +3,10 @@ import {AppComponent} from './app.component';
 import {MonsterListComponent} from './monster/monster-list.component';
 import {MonsterComponent} from './monster/monster.component';
 import {MonsterEditComponent} from './monster/monster-edit.component';
+
+import {LayerListComponent} from './layer/layer-list.component';
+import {LayerComponent} from './layer/layer.component';
+import {LayerEditComponent} from './layer/layer-edit.component';
 // import {ChatRoomComponent} from './chat/chat-room.component';
 import { RouterConfig, ROUTER_DIRECTIVES, provideRouter } from '@angular/router';
 
@@ -11,7 +15,11 @@ const routes: RouterConfig = [
   { path: 'monster', component: MonsterListComponent },
   { path: 'monster/edit', component: MonsterEditComponent },
   { path: 'monster/edit/:id', component: MonsterEditComponent },
-  { path: 'monster/:id/:name', component: MonsterComponent }
+  { path: 'monster/:id/:name', component: MonsterComponent }, 
+  { path: 'layer', component: LayerListComponent },
+  { path: 'layer/edit', component: LayerEditComponent },
+  { path: 'layer/edit/:id', component: LayerEditComponent },
+  { path: 'layer/:id/:name', component: LayerEditComponent },
   // { path: 'chat', component: ChatRoomComponent }
 
 ];
