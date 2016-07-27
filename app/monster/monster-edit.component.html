@@ -16,9 +16,10 @@
 
   <button type="submit" [disabled]="!frmMonster.valid" class="btn btn-default">Submit</button>
 </form>
+
 <!--<pre>
 {{monsterToEdit | json}}
 
 </pre>-->
-
-<upload-demo></upload-demo>
+<!--<upload-demo></upload-demo>-->
+<deletable-items [items]="layer.locs" (itemToRemove)="removeLoc($event)" >deletable-items...</deletable-items>
