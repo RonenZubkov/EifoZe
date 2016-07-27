@@ -3,6 +3,11 @@ import {ActivatedRoute} from '@angular/router';
 import {LayerService} from './layer.service';
 import {LayerModel} from './layer.model';
 
+export interface ILoc {
+    name: string;
+    lat: number;
+    lng: number;
+}
 
 @Component({
   moduleId: module.id,
@@ -11,8 +16,6 @@ import {LayerModel} from './layer.model';
   template: `
     <section *ngIf="layer">
       <h2>Layer {{layer.name}}</h2>
-      <img [src]="layer.getImgUrl()" >
-
     </section>
   `
 })

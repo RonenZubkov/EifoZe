@@ -14,12 +14,14 @@ import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component'
 export class LayerEditComponent implements OnInit {
 
   private frmLayer: FormGroup;
-  private layerToEdit: LayerModel;
+  private layerToEdit: LayerModel = new LayerModel('', [], '');
 
   constructor(private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private layerService: LayerService) { }
+              private route: ActivatedRoute,
+              private router: Router,
+              private layerService: LayerService) {
+      
+     }
 
   ngOnInit() {
     console.log('this.route.params', this.route.params);
@@ -34,7 +36,8 @@ export class LayerEditComponent implements OnInit {
                 this.layerToEdit = layer;
                 console.log('in edit, ajax returned : ',  this.layerToEdit,  this.frmLayer.controls );
                 (<FormControl>this.frmLayer.controls['name']).updateValue(layer.name);
-                (<FormControl>this.frmLayer.controls['locs']).updateValue(layer.locs);
+                // (<FormControl>this.frmLayer.controls['lat']).updateValue(layer.locs.lat);
+                // (<FormControl>this.frmLayer.controls['lan']).updateValue(layer.locs.lan);
                 // (<FormControl>this.frmLayer.controls['power']).updateValue(layer.locs);
                 // (<FormControl>this.frmLayer.controls['power']).updateValue(layer.power);
             });
@@ -46,6 +49,8 @@ export class LayerEditComponent implements OnInit {
     this.layerService.save(this.frmLayer.value, layerId)
       .then(()=>{
           this.router.navigate(['/layer']);
+          console.log('layer:', this.layerToEdit);
+          
       });
 
   }
