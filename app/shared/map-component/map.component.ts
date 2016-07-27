@@ -61,17 +61,17 @@ interface marker {
 `
 })
 
-@Directive({
-    selector: 'map'
-})
+// @Directive({
+//     selector: 'map'
+// })
 
 export class MapComponent implements OnInit {
     // google maps zoom level
     zoom: number = 8;
 
     // initial center position for the map
-    lat: number = 51.673858;
-    lng: number = 7.815982;
+    lat: number = 32.782548;
+    lng: number = 35.014488;
 
     ngOnInit(){}
 
@@ -82,13 +82,41 @@ export class MapComponent implements OnInit {
 
     mapClicked($event: MouseEvent) {
         this.markers.push({
-            lat: $event.coords.lat,
-            lng: $event.coords.lng
+        lat: $event.coords.lat,
+        lng: $event.coords.lng
         });
     }
 
     markerDragEnd(m: marker, $event: MouseEvent) {
         console.log('dragEnd', m, $event);
+    }
+
+    // showPosition(pos){
+    //     var crd = pos.coords;
+    //     this.latHome = crd.latitude;
+    //     this.lngHome = crd.longitude;
+    //
+    //     console.warn('Your current position is:');
+    //     console.log('Latitude : ' + this.latHome);
+    //     console.log('Longitude: ' + this.lngHome);
+    //     console.log('More or less ' + crd.accuracy + ' meters.');
+    // }
+
+    showError(error){
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred");
+                break;
+        }
     }
 
     markers: marker[] = [
