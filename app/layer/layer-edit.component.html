@@ -10,9 +10,12 @@
 
   <div class="form-group">
     <label>Locs:</label>
-    <input type="text" class="form-control" formControlName="locName">
-    <p class="text-danger" *ngIf="frmLayer.controls.locName.dirty && frmLayer.controls.locName?.errors">Monster needs Power</p>
+    <hr>  
+    <!--<input type="text" class="form-control" formControlName="locName">
+    <p class="text-danger" *ngIf="frmLayer.controls.locName.dirty && frmLayer.controls.locName?.errors">Monster needs Power</p>-->
+    <label>Lat:</label>
     <input type="number" class="form-control" formControlName="lat">
+    <label>Lan:</label>
     <input type="number" class="form-control" formControlName="lan">    
   </div>
 

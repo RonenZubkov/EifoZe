@@ -1,4 +1,4 @@
-import {LocModel} from './layer.model';
+// import {LocModel} from './layer.model';
 
 export class LayerModel {
 
@@ -13,8 +13,8 @@ export class LayerModel {
 
 export class LocModel {
   public name : string;
-  public lng : number;
   public lat : number;
+  public lng : number;
   
   constructor(name:string, lng:number, lat:number) {
     

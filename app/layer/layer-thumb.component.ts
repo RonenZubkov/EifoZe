@@ -12,7 +12,7 @@ import {LayerModel} from './layer.model';
             <a routerLink="/layer/{{layer.id}}/{{layer.name}}">
               <img class="imgLayer" [src]="layer.getImgUrl()" />
             </a>
-            <h6>Power: {{layer.Locs}}</h6>
+            <h6>locs: {{layer.Locs}}</h6>
 
           </section>
           `

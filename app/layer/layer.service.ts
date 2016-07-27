@@ -17,7 +17,7 @@ export class LayerService {
       .then(res => {
         const jsonLayers = res.json();
         return jsonLayers.map((jsonLayer : any) =>
-          new LayerModel(jsonLayer.name, jsonLayer.power, jsonLayer._id))
+          new LayerModel(jsonLayer.name, jsonLayer.locs, jsonLayer._id))
       });
 
     prmLayers.catch(err => {
@@ -33,7 +33,7 @@ export class LayerService {
       .toPromise()
       .then(res => {
         const jsonLayer = res.json();
-        return new LayerModel(jsonLayer.name, jsonLayer.power, jsonLayer._id);
+        return new LayerModel(jsonLayer.name, jsonLayer.locs, jsonLayer._id);
       });
 
     prmLayer.catch(err => {
@@ -74,7 +74,7 @@ export class LayerService {
     prmLayer = response.toPromise()
       .then((res : any) => {
           const jsonLayer = res.json();
-          return new LayerModel(jsonLayer.name, jsonLayer.power, jsonLayer.id);
+          return new LayerModel(jsonLayer.name, jsonLayer.locs, jsonLayer.id);
       });
 
     prmLayer.catch(err => {
