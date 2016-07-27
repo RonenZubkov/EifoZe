@@ -1,20 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormControl} from '@angular/forms';
 import {MonsterService} from './monster.service';
 import {MonsterModel} from './monster.model';
-import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component'
+import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component';
+import {DeletableItemsComponent} from '../shared/deletable-items/deletable-items.component';
+
+
 
 @Component({
   moduleId: module.id,
   // selector: 'monster-edit',
   templateUrl: 'monster-edit.component.html',
-  directives: [REACTIVE_FORM_DIRECTIVES, UploadDemoComponent]
+  directives: [REACTIVE_FORM_DIRECTIVES, UploadDemoComponent, DeletableItemsComponent]
 })
 export class MonsterEditComponent implements OnInit {
 
   private frmMonster: FormGroup;
   private monsterToEdit: MonsterModel;
+  private layer = {
+                    "_id": "6e732fe",
+                    "name": "ATMs",
+                    "locs": [
+                      {
+                        "name": "Poalim Gvirol",
+                        "lng": 7678,
+                        "lat": 7468
+                      },
+                      {
+                        "name": "Poalim shanan",
+                        "lng": 7679,
+                        "lat": 7469
+                      }
+                    ]
+                  };
+  
 
   constructor(private formBuilder: FormBuilder,
     private route: ActivatedRoute,
