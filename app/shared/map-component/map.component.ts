@@ -60,7 +60,7 @@ interface marker {
      </toggleButton>
 
      <toggleButton>Wc</toggleButton>
-     <!--<h1 *ngIf="state">Example!</h1>-->
+     
 
 `
 })
@@ -79,7 +79,13 @@ export class MapComponent implements OnInit {
     lat: number = 32.782548;
     lng: number = 35.014488;
 
-    ngOnInit(){}
+    ngOnInit(){
+        if (navigator.geolocation) {
+            console.log('navigator.geolocation:');
+            navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
+            // this.showError);
+        }
+    }
 
 
     clickedMarker(label: string, index: number) {
@@ -97,16 +103,16 @@ export class MapComponent implements OnInit {
         console.log('dragEnd', m, $event);
     }
 
-    // showPosition(pos){
-    //     var crd = pos.coords;
-    //     this.latHome = crd.latitude;
-    //     this.lngHome = crd.longitude;
-    //
-    //     console.warn('Your current position is:');
-    //     console.log('Latitude : ' + this.latHome);
-    //     console.log('Longitude: ' + this.lngHome);
-    //     console.log('More or less ' + crd.accuracy + ' meters.');
-    // }
+    showPosition(pos){
+        var crd = pos.coords;
+        this.latHome = crd.latitude;
+        this.lngHome = crd.longitude;
+
+        console.warn('Your current position is:');
+        console.log('Latitude : ' + this.latHome);
+        console.log('Longitude: ' + this.lngHome);
+        console.log('More or less ' + crd.accuracy + ' meters.');
+    }
 
     showError(error){
         switch(error.code) {
