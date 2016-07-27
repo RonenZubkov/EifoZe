@@ -6,7 +6,7 @@ import {Component, OnInit} from '@angular/core';
 import {ngSelectLocation, EmitterService} from './ng2-location/browser-location';
 
 @Component({
-    selector: 'seed-app',
+    selector: 'map',
     providers: [EmitterService],
     template: `
   <div class="center">

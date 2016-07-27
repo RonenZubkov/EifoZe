@@ -53,7 +53,7 @@ interface marker {
           [fillColor]="'red'"
           [circleDraggable]="true"
           [editable]="true">
-      </sebm-google-map-circle>
+      </sebm-google-map-circle> 
 
     </sebm-google-map>
 
