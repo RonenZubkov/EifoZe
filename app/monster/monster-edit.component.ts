@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormContr
 import {MonsterService} from './monster.service';
 import {MonsterModel} from './monster.model';
 import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component';
-import {DeletableItemsComponent} from '../shared/deletable-items/deletable-items.component';
+import {EditableItemsComponent} from '../shared/editable-items/editable-items.component';
 
 
 
@@ -12,7 +12,7 @@ import {DeletableItemsComponent} from '../shared/deletable-items/deletable-items
   moduleId: module.id,
   // selector: 'monster-edit',
   templateUrl: 'monster-edit.component.html',
-  directives: [REACTIVE_FORM_DIRECTIVES, UploadDemoComponent, DeletableItemsComponent]
+  directives: [REACTIVE_FORM_DIRECTIVES, UploadDemoComponent, EditableItemsComponent]
 })
 export class MonsterEditComponent implements OnInit {
 
