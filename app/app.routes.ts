@@ -21,7 +21,8 @@ const routes: RouterConfig = [
   { path: 'layer', component: LayerListComponent },
   { path: 'layer/edit', component: LayerEditComponent },
   { path: 'layer/edit/:id', component: LayerEditComponent },
-  { path: 'layer/:id/:name', component: LayerEditComponent }
+  { path: 'layer/:id/:name', component: LayerComponent },
+
   // { path: 'shared/map-component/', component: MapComponent },
   // { path: 'chat', component: ChatRoomComponent }
 

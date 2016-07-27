@@ -18,7 +18,7 @@ import {LayerModel} from './layer.model';
 })
 export class LayerComponent implements OnInit {
 
-  private _layer : LayerModel;
+  private layer : LayerModel;
 
   constructor(
                 private route: ActivatedRoute,
@@ -31,7 +31,7 @@ export class LayerComponent implements OnInit {
      const id = params['id'];
      const prmLayer = this._layerService.get(id);
      prmLayer.then((layer: LayerModel) => {
-       this._layer = layer;
+       this.layer = layer;
      });
    });
   }
