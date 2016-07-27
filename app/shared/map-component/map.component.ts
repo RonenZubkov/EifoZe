@@ -1,5 +1,5 @@
 import { Component, Directive,OnInit } from '@angular/core';
-
+import {ToggleButton} from '../directives/toggle-button';
 import { GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
 
 
@@ -10,13 +10,15 @@ interface marker {
     label?: string;
     draggable?: boolean;
     icon?: string;
+    sym?: string;
 }
 
 
 @Component({
     moduleId: module.id,
     selector: 'map',
-    directives: [GOOGLE_MAPS_DIRECTIVES],
+    directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton],
+    providers: [],
     // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS],
     styles: [`
     .sebm-google-map-container {
@@ -47,16 +49,18 @@ interface marker {
         </sebm-google-map-info-window>
         
       </sebm-google-map-marker>
-      
-      <sebm-google-map-circle [latitude]="lat + 0.3" [longitude]="lng" 
-          [radius]="5000"
-          [fillColor]="'red'"
-          [circleDraggable]="true"
-          [editable]="true">
-      </sebm-google-map-circle> 
+
+     
+     
 
     </sebm-google-map>
+    
+     <toggleButton [(on)]="state">Atm
+        {{state ? 'On' : 'Off'}}
+     </toggleButton>
 
+     <toggleButton>Wc</toggleButton>
+     <!--<h1 *ngIf="state">Example!</h1>-->
 
 `
 })
@@ -66,6 +70,8 @@ interface marker {
 // })
 
 export class MapComponent implements OnInit {
+
+    state: boolean = false;
     // google maps zoom level
     zoom: number = 8;
 
@@ -121,22 +127,25 @@ export class MapComponent implements OnInit {
 
     markers: marker[] = [
         {
-            lat: 51.673858,
-            lng: 7.815982,
+            lat: 32.087289,
+            lng: 34.803521,
             label: 'A',
-            draggable: true
+            draggable: true,
+            sym: 'atm'
         },
         {
-            lat: 51.373858,
-            lng: 7.215982,
+            lat: 32.087871,
+            lng: 34.803089,
             label: 'B',
-            draggable: false
+            draggable: false,
+            sym: 'atm'
         },
         {
-            lat: 51.723858,
-            lng: 7.895982,
+            lat: 32.087516,
+            lng: 34.802052,
             label: 'C',
-            draggable: true
+            draggable: true,
+            sym: 'wc'
         }
     ]
 
