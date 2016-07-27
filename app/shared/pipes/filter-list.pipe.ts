@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Injectable, Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'filterBy',
@@ -11,7 +11,18 @@ export class FilterByPipe implements PipeTransform {
     return list.filter(item=>{
       return item.name.toLowerCase()
               .indexOf(filter.byName.toLowerCase()) !== -1 &&
-             (!filter.byPower || item.power === filter.byPower)
+             (!filter.sym || item.sym === filter.sym)
     })
+  }
+}
+
+@Pipe({
+  name: 'myfilter'
+})
+
+@Injectable()
+export class SymFilterPipe implements PipeTransform {
+  transform(items: any[], args: any[]): any {
+    return items.filter(item => item.id.indexOf(args[0]) !== -1);
   }
 }
