@@ -1,7 +1,7 @@
 <h1>Add Layer</h1>
 <form [formGroup]="frmLayer" (submit)="save()" >
   <div class="form-group">
-    <label>Name:</label>
+    <label>Layer Name:</label>
     <input type="text" class="form-control" formControlName="name" autofocus>
     <p class="text-danger" *ngIf="frmLayer.controls.name.dirty && frmLayer.controls.name.errors?.required">Layer has no name</p>
     <p class="text-danger" *ngIf="frmLayer.controls.name.dirty && frmLayer.controls.name.errors?.minlength">Layer's name too short</p>
@@ -9,7 +9,8 @@
   </div>
 
   <div class="form-group">
-    <editable-items [items]="layerToEdit.locs" (added)="addLoc($event)" (removed)="removeLoc($event)"></editable-items>
+    <!--<editable-items [items]="layerToEdit.locs" (added)="addLoc($event)" (removed)="removeLoc($event)"></editable-items>-->
+    <editable-items [items]="layer.locs" [itemsLayerName]="layer.name" (edit)="editLoc($event)" >editable-items...</editable-items>
     
   </div>
 
@@ -19,5 +20,4 @@
 {{layerToEdit | json}}
 
 </pre>
-
 <!--<upload-demo></upload-demo>-->
