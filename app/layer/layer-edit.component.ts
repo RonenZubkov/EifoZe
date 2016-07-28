@@ -4,17 +4,35 @@ import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormContr
 import {LayerService} from './layer.service';
 import {LayerModel} from './layer.model';
 import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component'
+import {EditableItemsComponent} from '../shared/editable-items/editable-items.component';
 
 @Component({
   moduleId: module.id,
   // selector: 'monster-edit',
   templateUrl: 'layer-edit.component.html',
-  directives: [REACTIVE_FORM_DIRECTIVES, UploadDemoComponent]
+  directives: [REACTIVE_FORM_DIRECTIVES, UploadDemoComponent, EditableItemsComponent]
 })
 export class LayerEditComponent implements OnInit {
 
   private frmLayer: FormGroup;
   private layerToEdit: LayerModel = new LayerModel('', [], '');
+  private layer = {
+                  "_id": "6e732fe",
+                  "name": "ATMs",
+                  "locs": [
+                    {
+                      "name": "Poalim Gvirol",
+                      "lat": 7468,
+                      "lan": 7678
+                    },
+                    {
+                      "name": "Poalim shanan",
+                      "lat": 7469,
+                      "lan": 7679
+                    }
+                  ]
+                };
+  
 
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
@@ -64,4 +82,27 @@ export class LayerEditComponent implements OnInit {
       locName: [5, Validators.required]
     });
   }
+
+
+// TODO: put in service
+    editLoc(action){
+        // console.log(ev);
+        let editedLocs;
+       switch (action.type) {
+          case 'remove':
+              editedLocs = this.layer.locs.filter(locs => locs.name !== action.item.name )
+
+          break;
+          case 'add':
+              editedLocs =[...this.layer.locs, action.item]
+          break;
+    
+         default:
+           break;
+       } 
+      this.layer.locs = editedLocs;
+      console.log(this.layer.locs);
+     
+    }
+
 }
