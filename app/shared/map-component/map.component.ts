@@ -1,16 +1,17 @@
-import { Component, Directive,OnInit } from '@angular/core';
+import { Component, Directive,OnInit} from '@angular/core';
 import {ToggleButton} from '../directives/toggle-button';
-import { GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import {SymFilterPipe} from '../pipes/filter-list.pipe'
 
-
-// just an interface for type safety.
 interface marker {
     lat: number;
     lng: number;
     label?: string;
-    draggable?: boolean;
+    shown?: boolean;
     icon?: string;
     sym?: string;
+    // latHome: any;
+    // lngHome: any;
 }
 
 
@@ -19,6 +20,7 @@ interface marker {
     selector: 'map',
     directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton],
     providers: [],
+    pipes: [SymFilterPipe],
     // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS],
     styles: [`
     .sebm-google-map-container {
@@ -33,16 +35,18 @@ interface marker {
       [zoom]="zoom"
       [disableDefaultUI]="false"
       [zoomControl]="false"
-      (mapClick)="mapClicked($event)">
-    
+      (mapClick)="mapClicked($event)
+              
+        ">
       <sebm-google-map-marker 
-          *ngFor="let m of markers; let i = index"
+          *ngFor="let m of markers | markPipe; let i = index"
           (markerClick)="clickedMarker(m.label, i)"
           [latitude]="m.lat"
           [longitude]="m.lng"
           [label]="m.label"
           [markerDraggable]="m.draggable"
-          (dragEnd)="markerDragEnd(m, $event)">
+          (dragEnd)="markerDragEnd(m, $event)
+          ">
           
         <sebm-google-map-info-window>
           <strong>InfoWindow content</strong>
@@ -87,6 +91,16 @@ export class MapComponent implements OnInit {
         }
     }
 
+    // constructor(private _wrapper: GoogleMapsAPIWrapper){
+    //     this._wrapper.getNativeMap().then((m) => {
+    //         let options = { minZoom: 2, maxZoom: 15,
+    //             disableDefaultUI: true,
+    //             scrollwheel: true,
+    //             draggable: false,
+    //             disableDoubleClickZoom: false,
+    //             panControl: false,
+    //             scaleControl: false,
+    // }})}
 
     clickedMarker(label: string, index: number) {
         console.log(`clicked the marker: ${label || index}`)
@@ -105,12 +119,12 @@ export class MapComponent implements OnInit {
 
     showPosition(pos){
         var crd = pos.coords;
-        this.latHome = crd.latitude;
-        this.lngHome = crd.longitude;
+        // this.latHome = crd.latitude;
+        // this.lngHome = crd.longitude;
 
         console.warn('Your current position is:');
-        console.log('Latitude : ' + this.latHome);
-        console.log('Longitude: ' + this.lngHome);
+        // console.log('Latitude : ' + this.latHome);
+        // console.log('Longitude: ' + this.lngHome);
         console.log('More or less ' + crd.accuracy + ' meters.');
     }
 
@@ -136,21 +150,21 @@ export class MapComponent implements OnInit {
             lat: 32.087289,
             lng: 34.803521,
             label: 'A',
-            draggable: true,
+            shown: true,
             sym: 'atm'
         },
         {
             lat: 32.087871,
             lng: 34.803089,
             label: 'B',
-            draggable: false,
+            shown: false,
             sym: 'atm'
         },
         {
             lat: 32.087516,
             lng: 34.802052,
             label: 'C',
-            draggable: true,
+            shown: true,
             sym: 'wc'
         }
     ]
