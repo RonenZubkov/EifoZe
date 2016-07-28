@@ -15,23 +15,23 @@ import {EditableItemsComponent} from '../shared/editable-items/editable-items.co
 export class LayerEditComponent implements OnInit {
 
   private frmLayer: FormGroup;
-  private layerToEdit: LayerModel = new LayerModel('', [], '');
-  private layer = {
-                  "_id": "6e732fe",
-                  "name": "ATMs",
-                  "locs": [
-                    {
-                      "name": "Poalim Gvirol",
-                      "lat": 7468,
-                      "lan": 7678
-                    },
-                    {
-                      "name": "Poalim shanan",
-                      "lat": 7469,
-                      "lan": 7679
-                    }
-                  ]
-                };
+  private layer: LayerModel = new LayerModel(undefined, [], '');
+  // private layer = {
+  //                 "_id": "6e732fe",
+  //                 "name": "ATMs",
+  //                 "locs": [
+  //                   {
+  //                     "name": "Poalim Gvirol",
+  //                     "lat": 7468,
+  //                     "lan": 7678
+  //                   },
+  //                   {
+  //                     "name": "Poalim shanan",
+  //                     "lat": 7469,
+  //                     "lan": 7679
+  //                   }
+  //                 ]
+  //               };
   
 
   constructor(private formBuilder: FormBuilder,
@@ -51,24 +51,23 @@ export class LayerEditComponent implements OnInit {
           this.layerService.get(id)
             .then((layer) =>{
 
-                this.layerToEdit = layer;
-                console.log('in edit, ajax returned : ',  this.layerToEdit,  this.frmLayer.controls );
+                this.layer = layer;
+                console.log('in edit, ajax returned : ',  this.layer,  this.frmLayer.controls );
                 (<FormControl>this.frmLayer.controls['name']).updateValue(layer.name);
-                // (<FormControl>this.frmLayer.controls['lat']).updateValue(layer.locs.lat);
-                // (<FormControl>this.frmLayer.controls['lan']).updateValue(layer.locs.lan);
-                // (<FormControl>this.frmLayer.controls['power']).updateValue(layer.locs);
-                // (<FormControl>this.frmLayer.controls['power']).updateValue(layer.power);
             });
         }
       });
   }
   save() {
-    const layerId = (this.layerToEdit)?  this.layerToEdit.id : undefined;
-    this.layerService.save(this.frmLayer.value, layerId)
+    this.layer.name = this.frmLayer.controls['name'].value;
+
+    const layerId = (this.layer)?  this.layer.id : undefined;
+
+    console.log('this.layer',this.layer);
+    this.layerService.save(this.layer, layerId)
       .then(()=>{
           this.router.navigate(['/layer']);
-          console.log('layer:', this.layerToEdit);
-          
+    
       });
 
   }
@@ -78,15 +77,15 @@ export class LayerEditComponent implements OnInit {
       name: ['',
               Validators.compose([Validators.required,
                                   Validators.minLength(3),
-                                  Validators.maxLength(100)])],
-      locName: [5, Validators.required]
+                                  Validators.maxLength(100)])]
+      // locName: [5, Validators.required]
     });
   }
 
 
 // TODO: put in service
     editLoc(action){
-        // console.log(ev);
+        console.log('got action', action);
         let editedLocs;
        switch (action.type) {
           case 'remove':
@@ -101,7 +100,7 @@ export class LayerEditComponent implements OnInit {
            break;
        } 
       this.layer.locs = editedLocs;
-      console.log(this.layer.locs);
+      console.log('this.layer.locs', this.layer.locs);
      
     }
 

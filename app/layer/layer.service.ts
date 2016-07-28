@@ -68,8 +68,8 @@ export class LayerService {
       response = this.http.put(url, layerData)
     } else {
 	    const url = this.baseUrl;
-      
-       response = this.http.post(url, layerData)
+      delete layerData['_id'];
+      response = this.http.post(url, layerData)
       console.log('response:',response);
     }
 

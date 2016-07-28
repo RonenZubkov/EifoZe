@@ -7,15 +7,11 @@
     <p class="text-danger" *ngIf="frmLayer.controls.name.dirty && frmLayer.controls.name.errors?.minlength">Layer's name too short</p>
     <p class="text-danger" *ngIf="frmLayer.controls.name.dirty && frmLayer.controls.name.errors?.maxlength">Layer's name too long</p>
   </div>
-
-  <div class="form-group">
-    <!--<editable-items [items]="layerToEdit.locs" (added)="addLoc($event)" (removed)="removeLoc($event)"></editable-items>-->
-    <editable-items [items]="layer.locs" [itemsLayerName]="layer.name" (edit)="editLoc($event)" >editable-items...</editable-items>
-    
-  </div>
+<editable-items [items]="layer.locs" [itemsLayerName]="layer.name" (edit)="editLoc($event)" >editable-items...</editable-items>
 
   <button type="submit" [disabled]="!frmLayer.valid" class="btn btn-default">Submit</button>
 </form>
+    
 <pre>
 {{layerToEdit | json}}
 

@@ -7,27 +7,26 @@ import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormContr
   directives: [REACTIVE_FORM_DIRECTIVES],
   template: `
     <section>
-     <button type="button" (click)="visibleFlag = !visibleFlag">Add Location</button>
-      <div [hidden]="!visibleFlag" >
-       
+     <button (click)="toggelVisibleFlag($event)">Toggle</button>
+      <div [hidden]="visibleFlag" >
+        <form [formGroup]="frmItem" (submit)="save()" >
           <div class="form-group">
             <label>Name:</label>
-            <input type="text" class="form-control" [(ngModel)]="newLoc.name">
+            <input type="text" class="form-control" formControlName="name">
           </div>
 
           <div class="form-group">
             <label>lat:</label>
-            <input type="string" class="form-control"  [(ngModel)]="newLoc.lat">
+            <input type="string" class="form-control" formControlName="lat">
           </div>
 
           <div class="form-group">
           <label>lan:</label>
-          <input type="string" class="form-control"  [(ngModel)]="newLoc.lan">
+          <input type="string" class="form-control" formControlName="lan">
           </div>
 
-          <button type="button" class="btn btn-default" (click)="addLoc()">Add</button>
-          <button type="button" class="btn btn-info"  (click)="visibleFlag=false" >Cancel</button>
-        
+          <button type="submit" [disabled]="!frmItem.valid" class="btn btn-default">Submit</button>
+        </form>
       </div>
       <h2> {{itemsLayerName}}</h2>
 
@@ -54,13 +53,21 @@ export class EditableItemsComponent  {
 @Output() private edit = new EventEmitter();
 @Input() private items; 
 @Input() private itemsLayerName;
-private visibleFlag = false;
-private newLoc = {};
+ private frmItem: FormGroup;
+ private visibleFlag = true;
  
   
   constructor(private formBuilder: FormBuilder) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.prepareForm();
+  
+    
+    }
+  toggelVisibleFlag(ev) {
+    ev.preventDefault();
+		this.visibleFlag = !this.visibleFlag;
+	}
 
   removeItem(item){
      
@@ -69,12 +76,24 @@ private newLoc = {};
       this.edit.emit({type: 'remove', item})
     }
 
-  addLoc() {
+  save() {
       // a new item
-      this.edit.emit({type: 'add', item: this.newLoc});
-      this.newLoc = {};
+    
+      let newItem ={name: this.frmItem.value.name, lat: this.frmItem.value.lat, lan: this.frmItem.value.lan};
+      this.edit.emit({type: 'add', item: newItem});
   }
    
-  
+   prepareForm() {
+     this.frmItem = this.formBuilder.group({
+      name: ['',
+              Validators.compose([Validators.required,
+                                  Validators.minLength(3),
+                                  Validators.maxLength(100)])],
+      lat:  [0,Validators.required],
+      lan:  [0,Validators.required]
+      
+    });
+  }
+
 
 }

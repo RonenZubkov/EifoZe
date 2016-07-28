@@ -15,7 +15,7 @@
     'socket.io-parser':           'node_modules/socket.io-parser/index.js',
     'ng2-file-upload':            'node_modules/ng2-file-upload',
     // Google maps support.
-    'angular2-google-maps':       'https://npmcdn.com/angular2-google-maps@0.12.0'
+    'angular2-google-maps':       'https://crossorigin.me/https://npmcdn.com/angular2-google-maps@0.12.0'
   };
 
   // packages tells the System loader how to load when no filename and/or no extension

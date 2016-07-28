@@ -141,7 +141,7 @@ app.post('/data/:objType', function (req, res) {
 	const objType = req.params.objType;
 	const obj = req.body;
 	cl("POST for " + objType);
-
+	
 	dbConnect().then((db) => {
 		const collection = db.collection(objType);
 
