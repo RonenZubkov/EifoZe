@@ -14,13 +14,13 @@ import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormContr
         </div>
 
         <div class="form-group">
-          <label>Power:</label>
-          <input type="number" class="form-control" formControlName="lat">
+          <label>lat:</label>
+          <input type="string" class="form-control" formControlName="lat">
         </div>
 
         <div class="form-group">
-        <label>Price:</label>
-        <input type="number" class="form-control" formControlName="lng">
+        <label>lan:</label>
+        <input type="string" class="form-control" formControlName="lan">
         </div>
 
         <button type="submit" [disabled]="!frmItem.valid" class="btn btn-default">Submit</button>
@@ -47,24 +47,33 @@ import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormContr
 })
 export class EditableItemsComponent  {
  
-@Output() private remove = new EventEmitter();
-@Output() private add = new EventEmitter();
-@Input() private items; 
 
+@Output() private edit = new EventEmitter();
+@Input() private items; 
  private frmItem: FormGroup;
+ 
   
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.prepareForm();
+  
+    
     }
 
-  removeItem( item){
+  removeItem(item){
      
       console.log(item);
       
-      this.remove.emit(item)
+      this.edit.emit({type: 'remove', item})
     }
+
+  save() {
+      // a new item
+    
+      let newItem ={name: this.frmItem.value.name, lat: this.frmItem.value.lat, lan: this.frmItem.value.lan};
+      this.edit.emit({type: 'add', item: newItem});
+  }
    
    prepareForm() {
      this.frmItem = this.formBuilder.group({
@@ -73,8 +82,10 @@ export class EditableItemsComponent  {
                                   Validators.minLength(3),
                                   Validators.maxLength(100)])],
       lat:  [0,Validators.required],
-      lng:  [0,Validators.required]
+      lan:  [0,Validators.required]
       
     });
   }
+
+
 }
