@@ -17,12 +17,10 @@ export class FilterByPipe implements PipeTransform {
 }
 
 @Pipe({
-  name: 'myfilter'
+  name: 'markPipe'
 })
-
-@Injectable()
 export class SymFilterPipe implements PipeTransform {
   transform(items: any[], args: any[]): any {
-    return items.filter(item => item.id.indexOf(args[0]) !== -1);
+    return items.filter(item => item.shown);
   }
 }

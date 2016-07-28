@@ -24,13 +24,13 @@ export class MonsterEditComponent implements OnInit {
                     "locs": [
                       {
                         "name": "Poalim Gvirol",
-                        "lng": 7678,
-                        "lat": 7468
+                        "lat": 7468,
+                        "lan": 7678
                       },
                       {
                         "name": "Poalim shanan",
-                        "lng": 7679,
-                        "lat": 7469
+                        "lat": 7469,
+                        "lan": 7679
                       }
                     ]
                   };
@@ -59,14 +59,14 @@ export class MonsterEditComponent implements OnInit {
         }
       });
   }
-  save() {
-    const monsterId = (this.monsterToEdit)?  this.monsterToEdit.id : undefined;
-    this.monsterService.save(this.frmMonster.value, monsterId)
-      .then(()=>{
-          this.router.navigate(['/monster']);
-      });
+//   save() {
+//     const monsterId = (this.monsterToEdit)?  this.monsterToEdit.id : undefined;
+//     this.monsterService.save(this.frmMonster.value, monsterId)
+//       .then(()=>{
+//           this.router.navigate(['/monster']);
+//       });
 
-  }
+//   }
 
   prepareForm() {
      this.frmMonster = this.formBuilder.group({
@@ -77,4 +77,28 @@ export class MonsterEditComponent implements OnInit {
       power: [5, Validators.required]
     });
   }
+
+// TODO: put in service
+    editLoc(action){
+        // console.log(ev);
+        let editedLocs;
+       switch (action.type) {
+          case 'remove':
+              editedLocs = this.layer.locs.filter(locs => locs.name !== action.item.name )
+
+          break;
+          case 'add':
+              editedLocs =[...this.layer.locs, action.item]
+          break;
+    
+         default:
+           break;
+       } 
+      this.layer.locs = editedLocs;
+      console.log(this.layer.locs);
+     
+    }
+
 }
+
+
