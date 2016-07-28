@@ -1,7 +1,9 @@
 import { Component, Directive,OnInit} from '@angular/core';
 import {ToggleButton} from '../directives/toggle-button';
 import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
-import {SymFilterPipe} from '../pipes/filter-list.pipe'
+import {SymFilterPipe} from '../pipes/filter-list.pipe';
+import {LayerService} from '../../layer/layer.service';
+import {LayerModel} from "../../layer/layer.model";
 
 interface marker {
     lat: number;
@@ -19,11 +21,13 @@ interface marker {
     moduleId: module.id,
     selector: 'map',
     directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton],
-    providers: [],
+    providers: [GoogleMapsAPIWrapper],
     pipes: [SymFilterPipe],
-    // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS],
+    // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS,layers],
+    // providers: [LayerService],
     styles: [`
     .sebm-google-map-container {
+       margin-top: 25%;
        height: 300px;
      }
   `],
@@ -36,7 +40,6 @@ interface marker {
       [disableDefaultUI]="false"
       [zoomControl]="false"
       (mapClick)="mapClicked($event)
-              
         ">
       <sebm-google-map-marker 
           *ngFor="let m of markers | markPipe; let i = index"
@@ -47,15 +50,10 @@ interface marker {
           [markerDraggable]="m.draggable"
           (dragEnd)="markerDragEnd(m, $event)
           ">
-          
         <sebm-google-map-info-window>
           <strong>InfoWindow content</strong>
         </sebm-google-map-info-window>
-        
       </sebm-google-map-marker>
-
-     
-     
 
     </sebm-google-map>
     
@@ -64,14 +62,8 @@ interface marker {
      </toggleButton>
 
      <toggleButton>Wc</toggleButton>
-     
-
 `
 })
-
-// @Directive({
-//     selector: 'map'
-// })
 
 export class MapComponent implements OnInit {
 
@@ -83,24 +75,40 @@ export class MapComponent implements OnInit {
     lat: number = 32.782548;
     lng: number = 35.014488;
 
+    private _layers : LayerModel[];
+
+    constructor(private _wrapper: GoogleMapsAPIWrapper, private layerService: LayerService){
+        // this._wrapper.getNativeMap().then((m) => {
+        //     let options = { minZoom: 2, maxZoom: 15,
+        //         disableDefaultUI: true,
+        //         scrollwheel: true,
+        //         draggable: false,
+        //         disableDoubleClickZoom: false,
+        //         panControl: false,
+        //         scaleControl: false,
+        //     }})
+        }
+
     ngOnInit(){
+
+        let check = this.layerService.query().then(layers =>{
+            return this._layers = layers});
+        console.log('check:',check);
+        console.log('this._layers:', this._layers);
+
         if (navigator.geolocation) {
             console.log('navigator.geolocation:');
             navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
             // this.showError);
         }
+
+
+
+
+        // }
     }
 
-    // constructor(private _wrapper: GoogleMapsAPIWrapper){
-    //     this._wrapper.getNativeMap().then((m) => {
-    //         let options = { minZoom: 2, maxZoom: 15,
-    //             disableDefaultUI: true,
-    //             scrollwheel: true,
-    //             draggable: false,
-    //             disableDoubleClickZoom: false,
-    //             panControl: false,
-    //             scaleControl: false,
-    // }})}
+
 
     clickedMarker(label: string, index: number) {
         console.log(`clicked the marker: ${label || index}`)
