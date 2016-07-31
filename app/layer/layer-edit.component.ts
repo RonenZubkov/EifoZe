@@ -15,7 +15,7 @@ import {EditableItemsComponent} from '../shared/editable-items/editable-items.co
 export class LayerEditComponent implements OnInit {
 
   private frmLayer: FormGroup;
-  private layer: LayerModel = new LayerModel(undefined,'', [], '');
+  private layer: LayerModel = new LayerModel(undefined,'', [], '', false);
 
   
 

@@ -92,48 +92,21 @@ export class MapComponent implements OnInit {
              }})
         }
 
-    // get layers(){
-    //     return this._layers;
-    // }
 
     ngOnInit(){
 
-    //private layers : LayerModel[] = [];
-        //Too Active this after layer model will be Done, and h0w the fuck i map and push them into markers array
-
         const prmLayers = this.layerService.query();
-        // console.log("prmLayers =", prmLayers);
-
         prmLayers.then((layers :LayerModel[]) =>{
             console.log('layers:',layers);
             this.markers = [];
             layers.forEach(layer => {
-                layer.locs.forEach(loc=> {
-                    const marker = Object.assign({}, loc, {symbol : layer.symbol});
+                layer.locs.forEach(loc => {
+                    const marker = Object.assign({}, loc, {symbol : layer.symbol} , {isShown: true});
                     console.log('marker', marker);
                     this.markers.push(marker)
                 })
             });
-
-            // this.markers = [...this.markLayers, this.markers];
-
         });
-        // console.log('markLayers:',this.markLayers);
-
-        // return this.markLayers;
-        // //(monsters : MonsterModel[])
-        // console.log('check:',prmLayers);
-        // console.log('this._layers:');
-
-        // const prmLayers = this.layerService.query();
-        //     prmLayers.then((layers) =>{
-        //         this.layers = layers;
-        //         console.log(prmLayers);
-        //     });
-
-
-
-        // console.log('this._layers:');
 
         if(navigator.geolocation) {
             console.log('navigator.geolocation:');
@@ -170,17 +143,15 @@ export class MapComponent implements OnInit {
         let mySelf = {lat: 0,lng:0,isShown: true, label: 'Me'};
 
         console.log(pos);
-        // this.latHome = crd.latitude;
         mySelf.lat = pos.coords.latitude;
         mySelf.lng = pos.coords.longitude;
         console.log(mySelf);
-        // this.lngHome = crd.longitude;
 
         console.warn('Your current position is:');
         // console.log('Latitude : ' + this.latHome);
         // console.log('Longitude: ' + this.lngHome);
         // console.log('More or less ' + crd.accuracy + ' meters.');
-        // this.markers.push(mySelf);
+        this.markers.push(mySelf);
         console.log(this.markers);
     }
 
