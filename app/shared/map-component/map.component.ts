@@ -54,7 +54,7 @@ interface marker {
           
         <sebm-google-map-info-window>
         
-          <strong>InfoWindow content</strong>
+          <strong>{{m.label}}</strong>
           
         </sebm-google-map-info-window>
       </sebm-google-map-marker>
@@ -69,7 +69,7 @@ interface marker {
 })
 
 export class MapComponent implements OnInit {
-    private markLayers = [];
+
     state: boolean = false;
     // google maps zoom level
     zoom: number = 18;
@@ -78,7 +78,6 @@ export class MapComponent implements OnInit {
     lat: number = 32.087289;
     lng: number = 34.803521;
 
-    private _layers : LayerModel[];
 
     constructor(private _wrapper: GoogleMapsAPIWrapper, private layerService: LayerService){
          this._wrapper.getNativeMap().then((m) => {
@@ -116,7 +115,7 @@ export class MapComponent implements OnInit {
         }
 
     }
-    // addMarker(marker: SebmGoogleMapMarker)
+
 
 
     clickedMarker(label: string, index: number) {
@@ -129,10 +128,6 @@ export class MapComponent implements OnInit {
         lng: $event.coords.lng
         });
     }
-
-    // createMarker(options?:MarkerOptions) : Promise<Marker>{
-    //
-    // }
 
 
     markerDragEnd(m: marker, $event: MouseEvent) {
