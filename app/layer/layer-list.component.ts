@@ -20,15 +20,13 @@ import {LayerThumbComponent} from './layer-thumb.component';
     <layer-filter (filterChange)="filter = $event"></layer-filter>
     <a routerLink="/layer/edit" class="btn btn-primary">+ Add Layer</a>
   </section>
-  <table>
+  <table  class="table table-hover">
     <tr>
       <th>Name</th>
-      <th>Locs</th>
       <th>Actions</th>
     </tr>
     <tr *ngFor="let layer of layers">
       <td>{{layer.name}}</td>
-      <td>{{layer.locs}}</td>
       <td>
         <button class="btn btn-danger" (click)="removeLayer(layer.id)">Delete</button>
         <a routerLink="/layer/edit/{{layer.id}}" class="btn btn-success">Edit</a>
