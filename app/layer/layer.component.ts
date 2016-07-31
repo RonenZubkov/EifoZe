@@ -30,7 +30,6 @@ export class LayerComponent implements OnInit {
 
   ngOnInit() {
    this.route.params.subscribe(params => {
-    //  console.log('Params are: ', params);
      const id = params['id'];
      const prmLayer = this._layerService.get(id);
      prmLayer.then((layer: LayerModel) => {
