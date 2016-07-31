@@ -1,8 +1,5 @@
 import { PLATFORM_DIRECTIVES } from '@angular/core';
 import {AppComponent} from './app.component';
-import {MonsterListComponent} from './monster/monster-list.component';
-import {MonsterComponent} from './monster/monster.component';
-import {MonsterEditComponent} from './monster/monster-edit.component';
 
 import {LayerListComponent} from './layer/layer-list.component';
 import {LayerComponent} from './layer/layer.component';
@@ -14,10 +11,6 @@ import {MapComponent} from "./shared/map-component/map.component";
 const routes: RouterConfig = [
   { path: '', component: AppComponent },
   { path: 'map', component: MapComponent },
-  { path: 'monster', component: MonsterListComponent },
-  { path: 'monster/edit', component: MonsterEditComponent },
-  { path: 'monster/edit/:id', component: MonsterEditComponent },
-  { path: 'monster/:id/:name', component: MonsterComponent }, 
   { path: 'layer', component: LayerListComponent },
   { path: 'layer/edit', component: LayerEditComponent },
   { path: 'layer/edit/:id', component: LayerEditComponent },

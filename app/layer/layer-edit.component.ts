@@ -16,22 +16,7 @@ export class LayerEditComponent implements OnInit {
 
   private frmLayer: FormGroup;
   private layer: LayerModel = new LayerModel(undefined, [], '');
-  // private layer = {
-  //                 "_id": "6e732fe",
-  //                 "name": "ATMs",
-  //                 "locs": [
-  //                   {
-  //                     "name": "Poalim Gvirol",
-  //                     "lat": 7468,
-  //                     "lan": 7678
-  //                   },
-  //                   {
-  //                     "name": "Poalim shanan",
-  //                     "lat": 7469,
-  //                     "lan": 7679
-  //                   }
-  //                 ]
-  //               };
+
   
 
   constructor(private formBuilder: FormBuilder,
