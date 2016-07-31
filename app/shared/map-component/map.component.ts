@@ -11,9 +11,9 @@ interface marker {
     lat: number;
     lng: number;
     label?: string;
-    shown?: boolean;
+    isShown?: boolean;
     icon?: string;
-    sym?: string;
+    symbol?: string;
     // latHome: any;
     // lngHome: any;
 }
@@ -43,6 +43,7 @@ interface marker {
       [zoomControl]="false"
       (mapClick)="mapClicked($event)
         ">
+        
       <sebm-google-map-marker 
           *ngFor="let m of markers | markPipe; let i = index"
           (markerClick)="clickedMarker(m.label, i)"
@@ -52,11 +53,13 @@ interface marker {
           [markerDraggable]="m.draggable"
           (dragEnd)="markerDragEnd(m, $event)
           ">
+          
         <sebm-google-map-info-window>
-          <strong>InfoWindow content</strong>
+        
+          <strong>{{m.label}}</strong>
+          
         </sebm-google-map-info-window>
       </sebm-google-map-marker>
-
     </sebm-google-map>
     
      
@@ -68,62 +71,49 @@ export class MapComponent implements OnInit {
 
     state: boolean = false;
     // google maps zoom level
-    zoom: number = 8;
+    zoom: number = 18;
 
     // initial center position for the map
-    lat: number = 32.782548;
-    lng: number = 35.014488;
-
+    lat: number = 32.087289;
+    lng: number = 34.803521;
+    
     private _layers : LayerModel[];
 
     constructor(private _wrapper: GoogleMapsAPIWrapper, private layerService: LayerService){
-        // this._wrapper.getNativeMap().then((m) => {
-        //     let options = { minZoom: 2, maxZoom: 15,
-        //         disableDefaultUI: true,
-        //         scrollwheel: true,
-        //         draggable: false,
-        //         disableDoubleClickZoom: false,
-        //         panControl: false,
-        //         scaleControl: false,
-        //     }})
+         this._wrapper.getNativeMap().then((m) => {
+             let options = {
+                 minZoom: 2, maxZoom: 15,
+                 disableDefaultUI: true,
+                 draggable: false,
+                 disableDoubleClickZoom: false,
+                 panControl: false,
+                 scaleControl: false,
+             }})
         }
+
 
     ngOnInit(){
         const prmLayers = this.layerService.query();
-        // console.log("prmLayers =", prmLayers);
-
         prmLayers.then((layers :LayerModel[]) =>{
             this._layers = layers;
             console.log('layers:',layers);
             this.markers = [];
             layers.forEach(layer => {
-                layer.locs.forEach(loc=> {
-                    // loc.sym = layer.symbol;
-                    this.markers.push(loc)
+                layer.locs.forEach(loc => {
+                    const marker = Object.assign({}, loc, {symbol : layer.symbol} , {isShown: true});
+                    console.log('marker', marker);
+                    this.markers.push(marker)
                 })
-            })
-
-            // this.markers = [...this.markLayers, this.markers];
-            
+            });
         });
-        console.log('markers:',this.markers);
-        return this.markers;
 
-        // let check = this.layerService.query().then(layers =>{
-        //     return this._layers = layers});
-        // console.log('check:',check);
-        // console.log('this._layers:', this._layers);
+        if(navigator.geolocation) {
+            console.log('navigator.geolocation:');
+            // console.log('lets see what fucking info we get from this useless function: ',navigator.geolocation.getCurrentPosition(this.showError.bind(this)));
+            navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
+            // this.showError);
+        }
 
-        // if (navigator.geolocation) {
-        //     console.log('navigator.geolocation:');
-        //     navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
-        //     // this.showError);
-        // }
-
-
-
-
-        // }
     }
 
 
@@ -139,19 +129,25 @@ export class MapComponent implements OnInit {
         });
     }
 
+
     markerDragEnd(m: marker, $event: MouseEvent) {
         console.log('dragEnd', m, $event);
     }
 
     showPosition(pos){
-        var crd = pos.coords;
-        // this.latHome = crd.latitude;
-        // this.lngHome = crd.longitude;
+        let mySelf = {lat: 0,lng:0,isShown: true, label: 'Me'};
+
+        console.log(pos);
+        mySelf.lat = pos.coords.latitude;
+        mySelf.lng = pos.coords.longitude;
+        console.log(mySelf);
 
         console.warn('Your current position is:');
         // console.log('Latitude : ' + this.latHome);
         // console.log('Longitude: ' + this.lngHome);
-        console.log('More or less ' + crd.accuracy + ' meters.');
+        // console.log('More or less ' + crd.accuracy + ' meters.');
+        this.markers.push(mySelf);
+        console.log(this.markers);
     }
 
     showError(error){
@@ -176,22 +172,22 @@ export class MapComponent implements OnInit {
             lat: 32.087289,
             lng: 34.803521,
             label: 'A',
-            shown: true,
-            sym: 'atm'
+            isShown: true,
+            symbol: 'atm'
         },
         {
             lat: 32.087871,
             lng: 34.803089,
             label: 'B',
-            shown: false,
-            sym: 'atm'
+            isShown: false,
+            symbol: 'atm'
         },
         {
             lat: 32.087516,
             lng: 34.802052,
             label: 'C',
-            shown: true,
-            sym: 'wc'
+            isShown: true,
+            symbol: 'wc'
         }
     ]
 

@@ -21,6 +21,6 @@ export class FilterByPipe implements PipeTransform {
 })
 export class SymFilterPipe implements PipeTransform {
   transform(items: any[], args: any[]): any {
-    return items.filter(item => item.shown);
+    return items.filter(item => item.isShown);
   }
 }
