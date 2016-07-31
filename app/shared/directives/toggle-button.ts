@@ -8,11 +8,11 @@ import {Component, Input, Output,EventEmitter} from "@angular/core";
 @Component({
     selector: 'toggleButton',
     styles: [`
-    .on{
+    .off{
         background-color: whitesmoke;
         color: black;
     }
-    .off{
+    .on{
         background-color: blue;
         color: black;
     }
@@ -23,14 +23,13 @@ import {Component, Input, Output,EventEmitter} from "@angular/core";
     
     <ng-content></ng-content>
     </button>
-    {{on | json}}
     `
 
 
 })
 
 export class ToggleButton{
-    @Input() on = true;
+    @Input() on = false;
     @Output() onChange = new EventEmitter();
 
     onClick(){

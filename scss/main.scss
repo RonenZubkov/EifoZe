@@ -1,4 +1,11 @@
-$badass: #bada55;
-body { 
-  background-color: $badass; 
-}
+
+// ======================= MAIN SCSS =======================
+
+// == Components ==
+@import "components/mapComponent";
+
+// == Helpers ==
+@import "helpers/colors";
+
+// == Pages ==
+@import "pages/home";

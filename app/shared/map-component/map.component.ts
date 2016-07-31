@@ -4,6 +4,8 @@ import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOG
 import {SymFilterPipe} from '../pipes/filter-list.pipe';
 import {LayerService} from '../../layer/layer.service';
 import {LayerModel} from "../../layer/layer.model";
+import {MapLayerComponent} from '../mapLayers/map-layer.component';
+import {LayerFilterComponent} from '../../layer/layer-filter.component';
 
 interface marker {
     lat: number;
@@ -20,8 +22,8 @@ interface marker {
 @Component({
     moduleId: module.id,
     selector: 'map',
-    directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton],
-    providers: [GoogleMapsAPIWrapper],
+    directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton, MapLayerComponent],
+    providers: [GoogleMapsAPIWrapper, LayerFilterComponent],
     pipes: [SymFilterPipe],
     // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS,layers],
     // providers: [LayerService],
@@ -57,11 +59,8 @@ interface marker {
 
     </sebm-google-map>
     
-     <toggleButton [(on)]="state">Atm
-        {{state ? 'On' : 'Off'}}
-     </toggleButton>
-
-     <toggleButton>Wc</toggleButton>
+     
+     <mapLayers [layers]="_layers">map layers</mapLayers>
 `
 })
 
@@ -90,17 +89,36 @@ export class MapComponent implements OnInit {
         }
 
     ngOnInit(){
+        const prmLayers = this.layerService.query();
+        // console.log("prmLayers =", prmLayers);
 
-        let check = this.layerService.query().then(layers =>{
-            return this._layers = layers});
-        console.log('check:',check);
-        console.log('this._layers:', this._layers);
+        prmLayers.then((layers :LayerModel[]) =>{
+            this._layers = layers;
+            console.log('layers:',layers);
+            this.markers = [];
+            layers.forEach(layer => {
+                layer.locs.forEach(loc=> {
+                    // loc.sym = layer.symbol;
+                    this.markers.push(loc)
+                })
+            })
 
-        if (navigator.geolocation) {
-            console.log('navigator.geolocation:');
-            navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
-            // this.showError);
-        }
+            // this.markers = [...this.markLayers, this.markers];
+            
+        });
+        console.log('markers:',this.markers);
+        return this.markers;
+
+        // let check = this.layerService.query().then(layers =>{
+        //     return this._layers = layers});
+        // console.log('check:',check);
+        // console.log('this._layers:', this._layers);
+
+        // if (navigator.geolocation) {
+        //     console.log('navigator.geolocation:');
+        //     navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
+        //     // this.showError);
+        // }
 
 
 
