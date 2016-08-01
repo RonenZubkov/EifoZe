@@ -4,7 +4,7 @@ import {LayerService} from './layer.service';
 import {LayerModel} from './layer.model';
 
 export interface ILoc {
-    name: string;
+    label: string;
     lat: number;
     lng: number;
 }
@@ -15,7 +15,7 @@ export interface ILoc {
   // selector: 'monster-list',
   template: `
     <section *ngIf="layer">
-      <h2>Layer {{layer.name}}</h2>
+      <h2>Layer {{layer.label}}</h2>
     </section>
   `
 })
@@ -30,7 +30,6 @@ export class LayerComponent implements OnInit {
 
   ngOnInit() {
    this.route.params.subscribe(params => {
-    //  console.log('Params are: ', params);
      const id = params['id'];
      const prmLayer = this._layerService.get(id);
      prmLayer.then((layer: LayerModel) => {

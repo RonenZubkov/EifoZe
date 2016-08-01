@@ -35,10 +35,12 @@ import {LayerThumbComponent} from './layer-thumb.component';
     </tr>
   </table>
 
+
   
     <nav class="navbar navbar-default navbar-fixed-bottom">
         <a class="btn btn-default" routerLink="/map">Map</a>
     </nav>
+
 `  
 })
 export class LayerListComponent implements OnInit {

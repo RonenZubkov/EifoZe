@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
@@ -5,7 +6,7 @@ import {LayerModel} from './layer.model';
 
 @Injectable()
 export class LayerService {
-
+  
   private baseUrl = 'http://localhost:3003/data/layer/';
   constructor(private http: Http) {}
 
@@ -17,7 +18,7 @@ export class LayerService {
       .then(res => {
         const jsonLayers = res.json();
         return jsonLayers.map((jsonLayer : any) =>
-          new LayerModel(jsonLayer.name, jsonLayer.locs, jsonLayer._id))
+          new LayerModel(jsonLayer.name, jsonLayer.symbol, jsonLayer.locs, jsonLayer._id,jsonLayer.isShown))
       });
 
     prmLayers.catch(err => {
@@ -33,7 +34,7 @@ export class LayerService {
       .toPromise()
       .then(res => {
         const jsonLayer = res.json();
-        return new LayerModel(jsonLayer.name, jsonLayer.locs, jsonLayer._id);
+        return new LayerModel(jsonLayer.name, jsonLayer.symbol, jsonLayer.locs, jsonLayer._id,jsonLayer.isShown);
       });
 
     prmLayer.catch(err => {
@@ -68,7 +69,7 @@ export class LayerService {
       response = this.http.put(url, layerData)
     } else {
 	    const url = this.baseUrl;
-      // delete layerData['_id'];
+      delete layerData['_id'];
       response = this.http.post(url, layerData)
       console.log('response:',response);
     }
@@ -76,7 +77,7 @@ export class LayerService {
     prmLayer = response.toPromise()
       .then((res : any) => {
           const jsonLayer = res.json();
-          return new LayerModel(jsonLayer.name, jsonLayer.locs, jsonLayer.id);
+          return new LayerModel(jsonLayer.name, jsonLayer.symbol, jsonLayer.locs, jsonLayer.id,jsonLayer.isShown);
       });
 
     prmLayer.catch(err => {
@@ -85,3 +86,4 @@ export class LayerService {
     return prmLayer;
   }
 }
+

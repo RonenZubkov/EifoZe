@@ -19,8 +19,8 @@ export class FilterByPipe implements PipeTransform {
 @Pipe({
   name: 'markPipe'
 })
-export class SymFilterPipe implements PipeTransform {
+export class MarkFilterPipe implements PipeTransform {
   transform(items: any[], args: any[]): any {
-    return items.filter(item => item.shown);
+    return items.filter(item => item.isShown);
   }
 }

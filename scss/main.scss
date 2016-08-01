@@ -1,3 +1,4 @@
+
 $badass: #f8f8f8;
 body { 
   background-color: $badass; 
@@ -31,3 +32,16 @@ map{
 .saveLayer{
 margin-bottom: 48px;;
 }
+
+
+// ======================= MAIN SCSS =======================
+
+// == Components ==
+@import "components/mapComponent";
+
+// == Helpers ==
+@import "helpers/colors";
+
+// == Pages ==
+@import "pages/home";
+
