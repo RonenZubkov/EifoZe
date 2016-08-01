@@ -74,7 +74,7 @@ export class LayerEditComponent implements OnInit {
         let editedLocs;
        switch (action.type) {
           case 'remove':
-              editedLocs = this.layer.locs.filter(locs => locs.name !== action.item.name )
+              editedLocs = this.layer.locs.filter(locs => locs.label !== action.item.name )
 
           break;
           case 'add':
@@ -90,4 +90,3 @@ export class LayerEditComponent implements OnInit {
     }
 
 }
->>>>>>> 01d35dd07681c03ddebc188c8a8f536613d31821
