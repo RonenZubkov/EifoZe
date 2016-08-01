@@ -9,6 +9,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
       <section>
         <h3>Filter</h3>
         By Name: <input type="text" [(ngModel)]="filter.byName" (input)="filterChanged()" />
+        <br>
         By Power: <input type="number" [(ngModel)]="filter.byPower" (input)="filterChanged()">
       </section>
 

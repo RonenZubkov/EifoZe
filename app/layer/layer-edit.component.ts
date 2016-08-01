@@ -6,6 +6,7 @@ import {LayerModel} from './layer.model';
 import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component'
 import {EditableItemsComponent} from '../shared/editable-items/editable-items.component';
 
+
 @Component({
   moduleId: module.id,
   // selector: 'monster-edit',

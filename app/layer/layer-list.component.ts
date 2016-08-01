@@ -15,8 +15,9 @@ import {LayerThumbComponent} from './layer-thumb.component';
   directives: [LayerFilterComponent, LayerThumbComponent],
   // selector: 'monster-list',
   template: `
+
   <section>
-    <h2>Layer</h2>
+    <h2> Edit Layers</h2>
     <layer-filter (filterChange)="filter = $event"></layer-filter>
     <a routerLink="/layer/edit" class="btn btn-primary">+ Add Layer</a>
   </section>
@@ -33,27 +34,12 @@ import {LayerThumbComponent} from './layer-thumb.component';
       </td>
     </tr>
   </table>
-`  
+
   
-    // <section>
-    //   <h2>Layer</h2>
-
-    //   <layer-filter (filterChange)="filter = $event"></layer-filter>
-
-    //   <a routerLink="/layer/edit" class="btn btn-primary">+ Add Layer</a>
-    //   <ul>
-    //     <li *ngFor="let layer of layers | filterBy:filter">
-    //         <layer-thumb [layer]="layer"></layer-thumb>
-    //         <div class="text-center">
-    //           <button class="btn btn-danger" (click)="removeLayer(layer.id)">Delete</button>
-    //           <a routerLink="/layer/edit/{{layer.id}}" class="btn btn-success">Edit</a>
-    //         </div>
-    //     </li>
-    //   </ul>
-    // </section>
-
-
-  // `
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <a class="btn btn-default" routerLink="/map">Map</a>
+    </nav>
+`  
 })
 export class LayerListComponent implements OnInit {
   // TODO: let the pipe setup the initial filter

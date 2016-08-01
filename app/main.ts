@@ -7,7 +7,7 @@ import { ROUTER_PROVIDERS } from './app.routes';
 
 import { AppComponent } from './app.component';
 
-import {MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import {MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES, LazyMapsAPILoaderConfig} from 'angular2-google-maps/core';
 
 
 
@@ -17,6 +17,11 @@ bootstrap(AppComponent, [
   ROUTER_PROVIDERS,
   HTTP_PROVIDERS,
   GOOGLE_MAPS_PROVIDERS,
-  provide(LocationStrategy, { useClass: PathLocationStrategy })
+  provide(LocationStrategy, { useClass: PathLocationStrategy }),
+  provide(LazyMapsAPILoaderConfig, {useFactory: () => {
+    let config = new LazyMapsAPILoaderConfig();
+    config.apiKey = 'AIzaSyBAFZNGGcHBe58YnPrVcdraNqhyPNz3WjI';
+    return config;
+  }})
 ]);
 

@@ -1,4 +1,4 @@
-import { Component, Directive,OnInit} from '@angular/core';
+import { Component, Directive,OnInit,Output, EventEmitter} from '@angular/core';
 import {ToggleButton} from '../directives/toggle-button';
 import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
 import {SymFilterPipe} from '../pipes/filter-list.pipe';
@@ -28,7 +28,7 @@ interface marker {
     styles: [`
     .sebm-google-map-container {
        margin-top: 25%;
-       height: 300px;
+       height: 83% ;
      }
   `],
 
@@ -56,12 +56,16 @@ interface marker {
       </sebm-google-map-marker>
 
     </sebm-google-map>
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <a class="btn addLayer-btn" routerLink="/layer/edit">Add your own Layer</a>
+    </nav>
     
-     <toggleButton [(on)]="state">Atm
+     <!--<toggleButton [(on)]="state">Atm
         {{state ? 'On' : 'Off'}}
      </toggleButton>
 
-     <toggleButton>Wc</toggleButton>
+     <toggleButton>Wc</toggleButton>-->
+
 `
 })
 
@@ -72,10 +76,12 @@ export class MapComponent implements OnInit {
     zoom: number = 8;
 
     // initial center position for the map
-    lat: number = 32.782548;
-    lng: number = 35.014488;
+    lat: number = 32.087374;
+    lng: number = 34.802799;
 
     private _layers : LayerModel[];
+    @Output() private locAdded = new EventEmitter;
+
 
     constructor(private _wrapper: GoogleMapsAPIWrapper, private layerService: LayerService){
         // this._wrapper.getNativeMap().then((m) => {
@@ -119,6 +125,10 @@ export class MapComponent implements OnInit {
         lat: $event.coords.lat,
         lng: $event.coords.lng
         });
+        
+        console.log('$event.coords', $event.coords);
+        
+        this.locAdded.emit($event.coords);
     }
 
     markerDragEnd(m: marker, $event: MouseEvent) {

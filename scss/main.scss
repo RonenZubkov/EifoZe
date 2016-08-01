@@ -1,4 +1,33 @@
-$badass: #bada55;
+$badass: #f8f8f8;
 body { 
   background-color: $badass; 
+}
+.titel{
+    color: #32a298 !important;
+    text-decoration: underline;
+    font-size: 26px;
+    font-family: cursive;
+    font-weight: bolder;
+}
+.addLayer-btn{
+      padding: 9px 58px;
+      font-size: 25px;
+      border: gray solid 1px;
+      color: #2e2828;
+}
+.navbar-nav {
+    margin: 0.0px 0px;
+        margin-left: -13px;
+}
+
+.btn{
+  padding: 9px 17px;
+  font-size: 19px;
+}
+map{
+     height: 308px;
+}
+
+.saveLayer{
+margin-bottom: 48px;;
 }

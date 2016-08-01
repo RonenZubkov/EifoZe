@@ -141,7 +141,7 @@ app.post('/data/:objType', function (req, res) {
 	const objType = req.params.objType;
 	const obj = req.body;
 	cl("POST for " + objType);
-	
+	delete obj._id;
 	dbConnect().then((db) => {
 		const collection = db.collection(objType);
 
@@ -166,6 +166,9 @@ app.put('/data/:objType/:id', function (req, res) {
 	const objId 	= req.params.id;
 	const newObj 	= req.body;
 	cl(`Requested to UPDATE the ${objType} with id: ${objId}`);
+	// PUT - when _id is there, as string, conertto ObjectId
+    if (newObj._id && typeof newObj._id === 'string') newObj._id = new mongodb.ObjectID(newObj._id);
+
 	dbConnect().then((db) => {
 		const collection = db.collection(objType);
 		collection.updateOne({ _id:  new mongodb.ObjectID(objId)}, newObj,
