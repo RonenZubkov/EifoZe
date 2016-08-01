@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
@@ -5,7 +6,7 @@ import {LayerModel} from './layer.model';
 
 @Injectable()
 export class LayerService {
-
+  
   private baseUrl = 'http://localhost:3003/data/layer/';
   constructor(private http: Http) {}
 
@@ -85,3 +86,4 @@ export class LayerService {
     return prmLayer;
   }
 }
+

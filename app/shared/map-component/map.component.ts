@@ -1,34 +1,37 @@
-import { Component, Directive,OnInit,NgZone,provide} from '@angular/core';
+import { Component, Directive,OnInit,NgZone,provide,Output, EventEmitter} from '@angular/core';
 import {ToggleButton} from '../directives/toggle-button';
-import {provideLazyMapsAPILoaderConfig, GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
-import {SymFilterPipe} from '../pipes/filter-list.pipe';
+import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import {MarkFilterPipe} from '../pipes/filter-list.pipe';
 import {LayerService} from '../../layer/layer.service';
 import {LayerModel} from "../../layer/layer.model";
 import {MarkerManager} from "angular2-google-maps/core/services/managers/marker-manager";
 import {google} from "../directives/googleplace.directive";
+import {MapLayerComponent} from '../mapLayers/map-layer.component';
+import {LayerFilterComponent} from '../../layer/layer-filter.component';
+
 
 interface marker {
     lat: number;
     lng: number;
     label?: string;
     isShown: boolean;
-    icon?: string;
     symbol?: string;
+
 }
 
 
 @Component({
     moduleId: module.id,
-    selector: 'sebm-google-map',
-    directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton],
-    providers: [GoogleMapsAPIWrapper,provideLazyMapsAPILoaderConfig],
-    pipes: [SymFilterPipe],
+    selector: 'map',
+    directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton, MapLayerComponent],
+    providers: [GoogleMapsAPIWrapper, LayerFilterComponent],
+    pipes: [MarkFilterPipe],
     // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS,layers],
     // providers: [LayerService],
     styles: [`
     .sebm-google-map-container {
        margin-top: 25%;
-       height: 300px;
+       height: 83% ;
      }
   `],
 
@@ -45,7 +48,8 @@ interface marker {
         ">
         
       <sebm-google-map-marker 
-          *ngFor="let m of markers | markPipe; let i = index"
+          *ngFor="let m of _markers | markPipe; let i = index"
+          
           (markerClick)="clickedMarker(m.label, i)"
           [latitude]="m.lat"
           [longitude]="m.lng"
@@ -61,12 +65,18 @@ interface marker {
         </sebm-google-map-info-window>
       </sebm-google-map-marker>
     </sebm-google-map>
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <a class="btn addLayer-btn" routerLink="/layer/edit">Add your own Layer</a>
+    </nav>
     
-     <toggleButton [(on)]="state">Atm
+
+     <!--<toggleButton [(on)]="state">Atm
         {{state ? 'On' : 'Off'}}
      </toggleButton>
 
-     <toggleButton>Wc</toggleButton>
+     <toggleButton>Wc</toggleButton>-->
+
+
 `
 })
 
@@ -77,8 +87,14 @@ export class MapComponent implements OnInit {
     zoom: number = 18;
 
     // initial center position for the map
+
     lat: number = 32.087289;
     lng: number = 34.803521;
+    
+    @Output() private locAdded = new EventEmitter;
+    private _layers : LayerModel[];
+    private _markers : marker[] = []
+ 
 
 
     constructor(private _wrapper: GoogleMapsAPIWrapper,_zone : NgZone,_markerManger: MarkerManager, private layerService: LayerService){
@@ -92,20 +108,23 @@ export class MapComponent implements OnInit {
                  panControl: false,
                  scaleControl: false,
              }})
-    }
+        }
 
 
     ngOnInit(){
 
         const prmLayers = this.layerService.query();
-        prmLayers.then((layers :LayerModel[]) =>{
+        prmLayers.then((layers : LayerModel[]) =>{
+            this._layers = layers;
             console.log('layers:',layers);
-            this.markers = [];
+            this._markers = [];
+            console.log("this._markers:", this._markers);
+            
             layers.forEach(layer => {
                 layer.locs.forEach(loc => {
                     const marker = Object.assign({}, loc, {symbol : layer.symbol} , {isShown: true});
                     console.log('marker', marker);
-                    this.markers.push(marker)
+                    this._markers.push(marker);
                 })
             });
         });
@@ -115,6 +134,9 @@ export class MapComponent implements OnInit {
             // console.log('lets see what fucking info we get from this useless function: ',navigator.geolocation.getCurrentPosition(this.showError.bind(this)));
             navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
             // this.showError);
+            
+            
+            
         }
 
         let autocomplete = new google.maps.places.Autocomplete(document.getElementById('your-search-bar'), {});
@@ -145,27 +167,33 @@ export class MapComponent implements OnInit {
         lng: $event.coords.lng,
         isShown: true
         });
+     this.locAdded.emit($event.coords);
     }
 
 
     markerDragEnd(m: marker, $event: MouseEvent) {
-        console.log('dragEnd', m, $event);
+        // console.log('dragEnd', m, $event);
     }
 
     showPosition(pos){
         let mySelf = {lat: 0,lng:0,isShown: true, label: 'Me'};
 
-        console.log(pos);
+        // console.log(pos);
         mySelf.lat = pos.coords.latitude;
         mySelf.lng = pos.coords.longitude;
-        console.log(mySelf);
+        // console.log(mySelf);
 
         console.warn('Your current position is:');
         // console.log('Latitude : ' + this.latHome);
         // console.log('Longitude: ' + this.lngHome);
         // console.log('More or less ' + crd.accuracy + ' meters.');
-        this.markers.push(mySelf);
-        console.log(this.markers);
+        // console.log('mySelf:',mySelf);
+        
+        this._markers.push(mySelf);
+        
+        console.log('this._markers:',this._markers);
+        
+       
     }
 
     showError(error){
