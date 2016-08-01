@@ -17,12 +17,12 @@ import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormContr
 
           <div class="form-group">
             <label>lat:</label>
-            <input type="string" class="form-control"  [(ngModel)]="newLoc.lat">
+            <input type="number" class="form-control"  [(ngModel)]="newLoc.lat">
           </div>
 
           <div class="form-group">
-          <label>lan:</label>
-          <input type="string" class="form-control"  [(ngModel)]="newLoc.lan">
+          <label>lng:</label>
+          <input type="number" class="form-control"  [(ngModel)]="newLoc.lng">
           </div>
 
           <button type="button" class="btn btn-default" (click)="addLoc()">Add</button>

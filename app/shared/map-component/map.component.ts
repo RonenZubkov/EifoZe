@@ -1,21 +1,19 @@
 import { Component, Directive,OnInit} from '@angular/core';
 import {ToggleButton} from '../directives/toggle-button';
 import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
-import {SymFilterPipe} from '../pipes/filter-list.pipe';
+import {MarkFilterPipe} from '../pipes/filter-list.pipe';
 import {LayerService} from '../../layer/layer.service';
 import {LayerModel} from "../../layer/layer.model";
 import {MapLayerComponent} from '../mapLayers/map-layer.component';
 import {LayerFilterComponent} from '../../layer/layer-filter.component';
 
+
 interface marker {
-    lat: number;
-    lng: number;
+    lat: any;
+    lng: any;
     label?: string;
     isShown?: boolean;
-    icon?: string;
     symbol?: string;
-    // latHome: any;
-    // lngHome: any;
 }
 
 
@@ -24,7 +22,7 @@ interface marker {
     selector: 'map',
     directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton, MapLayerComponent],
     providers: [GoogleMapsAPIWrapper, LayerFilterComponent],
-    pipes: [SymFilterPipe],
+    pipes: [MarkFilterPipe],
     // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS,layers],
     // providers: [LayerService],
     styles: [`
@@ -45,7 +43,8 @@ interface marker {
         ">
         
       <sebm-google-map-marker 
-          *ngFor="let m of markers | markPipe; let i = index"
+          *ngFor="let m of _markers | markPipe; let i = index"
+          
           (markerClick)="clickedMarker(m.label, i)"
           [latitude]="m.lat"
           [longitude]="m.lng"
@@ -78,6 +77,23 @@ export class MapComponent implements OnInit {
     lng: number = 34.803521;
     
     private _layers : LayerModel[];
+    private _markers : marker[] =         [
+  {
+    "lat": 32.087289,
+    "lng": 34.803089,
+    "label": "Hapoalim ",
+    "isShown": true,
+    "symbol": "cash"
+  },
+  {
+    "lat": 33.087289,
+    "lng": 33.803089,
+    "label": "Gvirol ",
+    "isShown": true,
+    "symbol": "cash"
+  }  
+]
+ 
 
     constructor(private _wrapper: GoogleMapsAPIWrapper, private layerService: LayerService){
          this._wrapper.getNativeMap().then((m) => {
@@ -93,25 +109,32 @@ export class MapComponent implements OnInit {
 
 
     ngOnInit(){
+        console.log('the markers1:',this._markers);
+        
         const prmLayers = this.layerService.query();
-        prmLayers.then((layers :LayerModel[]) =>{
+        prmLayers.then((layers : LayerModel[]) =>{
             this._layers = layers;
             console.log('layers:',layers);
-            this.markers = [];
+            this._markers = [];
+            console.log("this._markers:", this._markers);
+            
             layers.forEach(layer => {
                 layer.locs.forEach(loc => {
                     const marker = Object.assign({}, loc, {symbol : layer.symbol} , {isShown: true});
                     console.log('marker', marker);
-                    this.markers.push(marker)
+                    this._markers.push(marker);
                 })
             });
         });
 
         if(navigator.geolocation) {
-            console.log('navigator.geolocation:');
+            // console.log('navigator.geolocation:');
             // console.log('lets see what fucking info we get from this useless function: ',navigator.geolocation.getCurrentPosition(this.showError.bind(this)));
             navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
             // this.showError);
+            
+            
+            
         }
 
     }
@@ -123,31 +146,36 @@ export class MapComponent implements OnInit {
     }
 
     mapClicked($event: MouseEvent) {
-        this.markers.push({
-        lat: $event.coords.lat,
-        lng: $event.coords.lng
-        });
+        // this._markers.push({
+        // lat: $event.coords.lat,
+        // lng: $event.coords.lng
+        // });
     }
 
 
     markerDragEnd(m: marker, $event: MouseEvent) {
-        console.log('dragEnd', m, $event);
+        // console.log('dragEnd', m, $event);
     }
 
     showPosition(pos){
         let mySelf = {lat: 0,lng:0,isShown: true, label: 'Me'};
 
-        console.log(pos);
+        // console.log(pos);
         mySelf.lat = pos.coords.latitude;
         mySelf.lng = pos.coords.longitude;
-        console.log(mySelf);
+        // console.log(mySelf);
 
         console.warn('Your current position is:');
         // console.log('Latitude : ' + this.latHome);
         // console.log('Longitude: ' + this.lngHome);
         // console.log('More or less ' + crd.accuracy + ' meters.');
-        this.markers.push(mySelf);
-        console.log(this.markers);
+        // console.log('mySelf:',mySelf);
+        
+        this._markers.push(mySelf);
+        
+        console.log('this._markers:',this._markers);
+        
+       
     }
 
     showError(error){
@@ -167,28 +195,6 @@ export class MapComponent implements OnInit {
         }
     }
 
-    markers: marker[] = [
-        {
-            lat: 32.087289,
-            lng: 34.803521,
-            label: 'A',
-            isShown: true,
-            symbol: 'atm'
-        },
-        {
-            lat: 32.087871,
-            lng: 34.803089,
-            label: 'B',
-            isShown: false,
-            symbol: 'atm'
-        },
-        {
-            lat: 32.087516,
-            lng: 34.802052,
-            label: 'C',
-            isShown: true,
-            symbol: 'wc'
-        }
-    ]
+    // _markers: marker[] = [];
 
 }

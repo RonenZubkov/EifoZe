@@ -11,13 +11,13 @@
 >
 
 	<sebm-google-map-marker
-			*ngFor="let m of markers; let i = index"
+			*ngFor="let marker of _markers; let i = index"
 			(markerClick)="clickedMarker(m.label, i)"
-			[latitude]="m.lat"
-			[longitude]="m.lng"
-			[label]="m.label"
-			[markerDraggable]="m.draggable"
-			[iconUrl]="m.icon">
+			[latitude]="marker.lat"
+			[longitude]="marker.lng"
+			[label]="marker.label"
+			[markerDraggable]="marker.draggable"
+			[iconUrl]="marker.icon">
 
 		<sebm-google-map-info-window>
 			<p>More info!</p>
@@ -27,7 +27,6 @@
 
 </sebm-google-map>
 </div>
-<button>mmm</button>
 <a class="btn" routerLink="/layer/edit">New Layer</a>
 
 

@@ -4,7 +4,7 @@ import {LayerService} from './layer.service';
 import {LayerModel} from './layer.model';
 
 export interface ILoc {
-    name: string;
+    label: string;
     lat: number;
     lng: number;
 }
@@ -15,7 +15,7 @@ export interface ILoc {
   // selector: 'monster-list',
   template: `
     <section *ngIf="layer">
-      <h2>Layer {{layer.name}}</h2>
+      <h2>Layer {{layer.label}}</h2>
     </section>
   `
 })

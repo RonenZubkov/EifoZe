@@ -3,14 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, REACTIVE_FORM_DIRECTIVES, FormControl} from '@angular/forms';
 import {LayerService} from './layer.service';
 import {LayerModel} from './layer.model';
-import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component'
+// import {UploadDemoComponent} from '../shared/upload-demo/upload-demo.component'
 import {EditableItemsComponent} from '../shared/editable-items/editable-items.component';
 
 @Component({
   moduleId: module.id,
   // selector: 'monster-edit',
   templateUrl: 'layer-edit.component.html',
-  directives: [REACTIVE_FORM_DIRECTIVES, UploadDemoComponent, EditableItemsComponent]
+  directives: [REACTIVE_FORM_DIRECTIVES, EditableItemsComponent]
 })
 export class LayerEditComponent implements OnInit {
 
