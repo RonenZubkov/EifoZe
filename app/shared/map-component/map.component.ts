@@ -1,27 +1,27 @@
-import { Component, Directive,OnInit} from '@angular/core';
+import { Component, Directive,OnInit,NgZone,provide} from '@angular/core';
 import {ToggleButton} from '../directives/toggle-button';
-import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import {provideLazyMapsAPILoaderConfig, GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
 import {SymFilterPipe} from '../pipes/filter-list.pipe';
 import {LayerService} from '../../layer/layer.service';
 import {LayerModel} from "../../layer/layer.model";
+import {MarkerManager} from "angular2-google-maps/core/services/managers/marker-manager";
+import {google} from "../directives/googleplace.directive";
 
 interface marker {
     lat: number;
     lng: number;
     label?: string;
-    isShown?: boolean;
+    isShown: boolean;
     icon?: string;
     symbol?: string;
-    // latHome: any;
-    // lngHome: any;
 }
 
 
 @Component({
     moduleId: module.id,
-    selector: 'map',
+    selector: 'sebm-google-map',
     directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton],
-    providers: [GoogleMapsAPIWrapper],
+    providers: [GoogleMapsAPIWrapper,provideLazyMapsAPILoaderConfig],
     pipes: [SymFilterPipe],
     // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS,layers],
     // providers: [LayerService],
@@ -33,6 +33,8 @@ interface marker {
   `],
 
     template: `
+    <div>Hello</div>
+    <google-search-bar></google-search-bar>
     <sebm-google-map 
       [latitude]="lat"
       [longitude]="lng"
@@ -79,9 +81,10 @@ export class MapComponent implements OnInit {
     lng: number = 34.803521;
 
 
-    constructor(private _wrapper: GoogleMapsAPIWrapper, private layerService: LayerService){
+    constructor(private _wrapper: GoogleMapsAPIWrapper,_zone : NgZone,_markerManger: MarkerManager, private layerService: LayerService){
          this._wrapper.getNativeMap().then((m) => {
              let options = {
+                 // center: {lat: this._latitude, lng: this._longitude},
                  minZoom: 2, maxZoom: 15,
                  disableDefaultUI: true,
                  draggable: false,
@@ -89,7 +92,7 @@ export class MapComponent implements OnInit {
                  panControl: false,
                  scaleControl: false,
              }})
-        }
+    }
 
 
     ngOnInit(){
@@ -114,7 +117,21 @@ export class MapComponent implements OnInit {
             // this.showError);
         }
 
-    }
+        let autocomplete = new google.maps.places.Autocomplete(document.getElementById('your-search-bar'), {});
+        google.maps.event.addListener(autocomplete, 'place_changed', () => {
+            this.zone.run(() => {
+                let place = autocomplete.getPlace();
+                if (place.geometry.location) {
+                    this.lat = place.geometry.location.lat();
+                    this.lng = place.geometry.location.lng();
+                }
+            });
+        });
+    });
+}
+
+
+}
 
 
 
@@ -125,7 +142,8 @@ export class MapComponent implements OnInit {
     mapClicked($event: MouseEvent) {
         this.markers.push({
         lat: $event.coords.lat,
-        lng: $event.coords.lng
+        lng: $event.coords.lng,
+        isShown: true
         });
     }
 
@@ -167,6 +185,15 @@ export class MapComponent implements OnInit {
         }
     }
 
+    // autocomplete() {
+    //     this._loader.load().then(() => {
+    //         let autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocompleteInput"), {});
+    //         google.maps.event.addListener(autocomplete, 'place_changed', () => {
+    //             let place = autocomplete.getPlace();
+    //             console.log(place);
+    //         });
+    //     })};
+
     markers: marker[] = [
         {
             lat: 32.087289,
@@ -192,3 +219,13 @@ export class MapComponent implements OnInit {
     ]
 
 }
+
+
+// private _initMapInstance(el: HTMLElement) { this._mapsWrapper.createMap(el, {  }); this._handleBoundaries();
+// private _handleBoundaries() {    this._mapsWrapper.subscribeToMapEvent<void>('dragend').subscribe(() => {
+//     this._mapsWrapper.getCenter().then((center: LatLng) => {        var x = this._longitude;
+//         var y = this._latitude;        // console.log('y',y, 'x', x);
+// //  var maxX = 5.139133754119953;       var maxY = 51.52773156266013;
+// //  var minX = 5.105831446991047;       var minY = 51.51337849651561;        if (x < minX) x = minX;
+// //    if (x > maxX) x = maxX;       if (y < minY) y = minY;       if (y > maxY) y = maxY;
+// //    this._mapsWrapper.setCenter({lat: y, lng: x});    }); });
