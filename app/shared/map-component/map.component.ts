@@ -1,4 +1,4 @@
-import { Component, Directive,OnInit,NgZone,provide,Output, EventEmitter} from '@angular/core';
+import { Component, Directive ,OnInit,NgZone,provide,Output, EventEmitter} from '@angular/core';
 import {ToggleButton} from '../directives/toggle-button';
 // import {ANGULAR2_GOOGLE_MAPS_PROVIDERS, ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
 import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
@@ -22,7 +22,7 @@ declare let google:any;
 
 @Component({
     moduleId: module.id,
-    selector: 'map',
+    selector: 'sebm-google-map',
     directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton, MapLayerComponent,GooglePlaceSearch],
     providers: [GoogleMapsAPIWrapper, LayerFilterComponent,MarkerManager],
     pipes: [MarkFilterPipe],
@@ -84,6 +84,10 @@ declare let google:any;
 `
 })
 
+// @Directive({
+//     selector: 'mapStyle'
+// })
+
 export class MapComponent implements OnInit {
 
     state:boolean = false;
@@ -102,16 +106,17 @@ export class MapComponent implements OnInit {
 
     constructor(private _wrapper:GoogleMapsAPIWrapper, private _zone: NgZone, _markerManger: MarkerManager, private layerService:LayerService,private _loader: MapsAPILoader) {
         this._wrapper.getNativeMap().then((m) => {
-            let options = {
+            var options = {
                 // center: {lat: this._latitude, lng: this._longitude},
                 minZoom: 2, maxZoom: 15,
                 disableDefaultUI: true,
                 draggable: false,
                 disableDoubleClickZoom: false,
                 panControl: false,
-                scaleControl: false,
-            }
-        })
+                scaleControl: true
+            };
+            m.setOptions(options);
+        });
     }
 
 
@@ -140,7 +145,6 @@ export class MapComponent implements OnInit {
             navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
             // this.showError);
 
-
         }
 
         // Google Place Autocomplete
@@ -164,7 +168,8 @@ export class MapComponent implements OnInit {
     }
 
         clickedMarker(label: string, index: number){
-            console.log(`clicked the marker: ${label || index}`)
+            console.log(`clicked the marker: ${label && index}`)
+
         }
 
         mapClicked($event: MouseEvent){
