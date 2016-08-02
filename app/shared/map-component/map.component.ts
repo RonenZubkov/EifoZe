@@ -106,7 +106,7 @@ export class MapComponent implements OnInit {
 
     constructor(private _wrapper:GoogleMapsAPIWrapper, private _zone: NgZone, _markerManger: MarkerManager, private layerService:LayerService,private _loader: MapsAPILoader) {
         this._wrapper.getNativeMap().then((m) => {
-            var options = {
+            let options = {
                 // center: {lat: this._latitude, lng: this._longitude},
                 minZoom: 2, maxZoom: 15,
                 disableDefaultUI: true,
@@ -148,13 +148,13 @@ export class MapComponent implements OnInit {
         }
 
         // Google Place Autocomplete
-        var autocomplete:any;
-        var inputAddress = document.getElementById("address");
+        let autocomplete:any;
+        let inputAddress = document.getElementById("address");
         autocomplete = new google.maps.places.Autocomplete(inputAddress, {});
         google.maps.event.addListener(autocomplete, 'place_changed', ()=> {
 
             this._zone.run(() => {
-                var place = autocomplete.getPlace();
+                let place = autocomplete.getPlace();
                 this.lat = place.geometry.location.lat();
                 this.lng = place.geometry.location.lng();
                 // For an unknown reason you need to click the map for the relocation to happen (even if these lines are executed before)
@@ -165,11 +165,31 @@ export class MapComponent implements OnInit {
 
 
 
+        let directionsDisplay = new google.maps.DirectionsRenderer();
+        console.log('directionsDisplay: ',directionsDisplay);
+        let directionsService = new google.maps.DirectionsService();
+        console.log('directionsService: ',directionsService);
+        let geocoder = new google.maps.Geocoder();
+        console.log('geocoder: ',geocoder);
+
+
+
     }
 
-        clickedMarker(label: string, index: number){
-            console.log(`clicked the marker: ${label && index}`)
-
+        clickedMarker(label: string, index: number, directionsService, directionsDisplay, pointA){
+            console.log(`clicked the marker: ${label && index}`);
+            directionsService.route({
+                origin: pointA,
+                //Need to check the json we receive from DB, might not match with googles request.
+                destination: this._markers[index],
+                travelMode: google.maps.TravelMode.DRIVING
+            },function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
         }
 
         mapClicked($event: MouseEvent){
@@ -224,6 +244,21 @@ export class MapComponent implements OnInit {
             }
         }
 
+    calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
+        directionsService.route({
+                origin: pointA,
+                destination: pointB,
+                travelMode: google.maps.TravelMode.DRIVING
+            },function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+            } else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+
+
 
         // autocomplete() {
         //     this._loader.load().then(() => {
@@ -238,6 +273,9 @@ export class MapComponent implements OnInit {
     }
 // }
 
+
+//Importent!!
+// calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB);
 
 // private _initMapInstance(el: HTMLElement) { this._mapsWrapper.createMap(el, {  }); this._handleBoundaries();
 // private _handleBoundaries() {    this._mapsWrapper.subscribeToMapEvent<void>('dragend').subscribe(() => {

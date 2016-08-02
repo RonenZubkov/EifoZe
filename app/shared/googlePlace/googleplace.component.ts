@@ -1,11 +1,11 @@
 import {Component} from '@angular/core';
-import {GooglePlaceDirective} from '../directives/googleplace.directive';
+import {GooglePlaceDirective} from './googleplace.directive';
 
 @Component({
   selector : 'searchButton',
   directives: [GooglePlaceDirective],
   template:  `
-           <input type="text" [(ngModel)] = "address"  (setAddress) = "getAddress($event)" googleplace/>
+           <!--<input type="text" [(ngModel)] = "address"  (setAddress) = "getAddress($event)" googleplace/>-->
            `
 })
 

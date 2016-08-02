@@ -5,7 +5,7 @@
 import {Directive, ElementRef, EventEmitter, Output} from '@angular/core';
 import {NgModel} from '@angular/common';
 
-declare var google:any;
+export declare var google:any;
 
 @Directive({
     selector: '[googleplace]',
