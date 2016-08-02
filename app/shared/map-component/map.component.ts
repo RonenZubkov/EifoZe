@@ -1,4 +1,5 @@
 import { Component, Directive ,OnInit,NgZone,provide,Output, EventEmitter} from '@angular/core';
+import {Observable} from  'rxjs';
 import {ToggleButton} from '../directives/toggle-button';
 // import {ANGULAR2_GOOGLE_MAPS_PROVIDERS, ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
 import {GoogleMapsAPIWrapper ,MapsAPILoader, NoOpMapsAPILoader, MouseEvent, GOOGLE_MAPS_PROVIDERS, GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
@@ -9,6 +10,8 @@ import {MarkerManager} from "angular2-google-maps/core/services/managers/marker-
 import {GooglePlaceSearch} from "../googlePlace/googleplace.component";
 import {MapLayerComponent} from '../mapLayers/map-layer.component';
 import {LayerFilterComponent} from '../../layer/layer-filter.component';
+import {GeolocationService} from '../services/geolocation';
+
 
 interface marker {
     lat: number;
@@ -16,6 +19,7 @@ interface marker {
     label?: string;
     isShown: boolean;
     symbol?: string;
+    layerId: string;
 }
 
 declare let google:any;
@@ -24,7 +28,7 @@ declare let google:any;
     moduleId: module.id,
     selector: 'sebm-google-map',
     directives: [GOOGLE_MAPS_DIRECTIVES,ToggleButton, MapLayerComponent,GooglePlaceSearch],
-    providers: [GoogleMapsAPIWrapper, LayerFilterComponent,MarkerManager],
+    providers: [GoogleMapsAPIWrapper, LayerFilterComponent,MarkerManager,GeolocationService],
     pipes: [MarkFilterPipe],
     // providers: [ANGULAR2_GOOGLE_MAPS_PROVIDERS,layers],
     // providers: [LayerService],
@@ -34,6 +38,7 @@ declare let google:any;
        height: 83% ;
      }
   `],
+    // bindings:[GeolocationService],
 
     template: `
     <sebm-google-map 
@@ -62,9 +67,17 @@ declare let google:any;
           <strong>{{m.label}}</strong>
           
         </sebm-google-map-info-window>
+        
       </sebm-google-map-marker>
+      
+              <sebm-google-map-marker *ngIf="_myPos"
+          [latitude]="_myPos.lat"
+          [longitude]="_myPos.lng"
+          [label]="'Me'">
+        </sebm-google-map-marker>
+        
     </sebm-google-map>
-    <input id="address" type="text" />
+    <!--<input id="address" type="text" />-->
     <google-search-bar></google-search-bar>
     <searchButton></searchButton>
 
@@ -95,16 +108,22 @@ export class MapComponent implements OnInit {
     zoom:number = 18;
 
     // initial center position for the map
+    private mySelf$:any;
 
-    lat:number = 32.087289;
+    private _lat:number = 0;
+    private _lng:number = 0;
+
+
+    lat:number = 32.087289
     lng:number = 34.803521;
 
     @Output() private locAdded = new EventEmitter;
     private _layers:LayerModel[];
     private _markers:marker[] = [];
+    private _myPos:marker;
 
 
-    constructor(private _wrapper:GoogleMapsAPIWrapper, private _zone: NgZone, _markerManger: MarkerManager, private layerService:LayerService,private _loader: MapsAPILoader) {
+    constructor(geolocationService:GeolocationService, private _wrapper:GoogleMapsAPIWrapper, private _zone:NgZone, _markerManger:MarkerManager, private layerService:LayerService, private _loader:MapsAPILoader) {
         this._wrapper.getNativeMap().then((m) => {
             let options = {
                 // center: {lat: this._latitude, lng: this._longitude},
@@ -117,140 +136,91 @@ export class MapComponent implements OnInit {
             };
             m.setOptions(options);
         });
+
+        this.mySelf$ = geolocationService.getLocation({maximumAge: 600000, timeout: 5000, enableHighAccuracy: true})
+        // console.log(geolocationService)
+            .subscribe(res => this.mySelf$ = res);
+
+        console.log(this.mySelf$);
     }
 
 
     ngOnInit() {
 
+        //gets the current position
+        this.getCurrentPosition();
+
         const prmLayers = this.layerService.query();
         prmLayers.then((layers:LayerModel[]) => {
+            //by query it gets our layers to layers[]
             this._layers = layers;
-            console.log('layers:', layers);
             this._markers = [];
-            console.log("this._markers:", this._markers);
-
-            layers.forEach(layer => {
-                layer.locs.forEach(loc => {
-                    const marker = Object.assign({}, loc, {symbol: layer.symbol}, {isShown: true});
-                    console.log('marker', marker);
-                    this._markers.push(marker);
-                })
-            });
+            layers.forEach(layer => this.createMarkers(layer));
         });
 
-
+        //its allow to follow the location on moving.
         if (navigator.geolocation) {
-            console.log('navigator.geolocation:');
-            // console.log('lets see what fucking info we get from this useless function: ',navigator.geolocation.getCurrentPosition(this.showError.bind(this)));
             navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
-            // this.showError);
-
         }
-
-        // Google Place Autocomplete
-        let autocomplete:any;
-        let inputAddress = document.getElementById("address");
-        autocomplete = new google.maps.places.Autocomplete(inputAddress, {});
-        google.maps.event.addListener(autocomplete, 'place_changed', ()=> {
-
-            this._zone.run(() => {
-                let place = autocomplete.getPlace();
-                this.lat = place.geometry.location.lat();
-                this.lng = place.geometry.location.lng();
-                // For an unknown reason you need to click the map for the relocation to happen (even if these lines are executed before)
-                console.log(place);
-            });
-
-        });
-
-
-
-        let directionsDisplay = new google.maps.DirectionsRenderer();
-        console.log('directionsDisplay: ',directionsDisplay);
-        let directionsService = new google.maps.DirectionsService();
-        console.log('directionsService: ',directionsService);
-        let geocoder = new google.maps.Geocoder();
-        console.log('geocoder: ',geocoder);
-
-
 
     }
 
-        clickedMarker(label: string, index: number, directionsService, directionsDisplay, pointA){
-            console.log(`clicked the marker: ${label && index}`);
-            directionsService.route({
-                origin: pointA,
-                //Need to check the json we receive from DB, might not match with googles request.
-                destination: this._markers[index],
-                travelMode: google.maps.TravelMode.DRIVING
-            },function(response, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
-                    directionsDisplay.setDirections(response);
-                } else {
-                    window.alert('Directions request failed due to ' + status);
-                }
-            });
-        }
 
-        mapClicked($event: MouseEvent){
-            this._markers.push({
-                lat: $event.coords.lat,
-                lng: $event.coords.lng,
-                isShown: true
-            });
-            this.locAdded.emit($event.coords);
-        }
+    // if (navigator.geolocation) {
+    //     console.log('navigator.geolocation:');
+    //     // console.log('lets see what fucking info we get from this useless function: ',navigator.geolocation.getCurrentPosition(this.showError.bind(this)));
+    //     navigator.geolocation.watchPosition(this.showPosition.bind(this), this.showError.bind(this));
+    //     // this.showError);
+    //
+    // }
 
+    // Google Place Autocomplete
+    // let autocomplete:any;
+    // let inputAddress = document.getElementById("address");
+    // autocomplete = new google.maps.places.Autocomplete(inputAddress, {});
+    // google.maps.event.addListener(autocomplete, 'place_changed', ()=> {
+    //
+    //     this._zone.run(() => {
+    //         let place = autocomplete.getPlace();
+    //         this.lat = place.geometry.location.lat();
+    //         this.lng = place.geometry.location.lng();
+    //         // For an unknown reason you need to click the map for the relocation to happen (even if these lines are executed before)
+    //         console.log(place);
+    //     });
+    //
+    // });
 
-        markerDragEnd(m: marker, $event: MouseEvent){
-            // console.log('dragEnd', m, $event);
-        }
+    //gets the current location and rendering it to the map
+    getCurrentPosition() {
+        console.log('im here...getting position');
 
-        showPosition(pos){
-            let mySelf = {lat: 0, lng: 0, isShown: true, label: 'Me'};
-
-            // console.log(pos);
-            mySelf.lat = pos.coords.latitude;
-            mySelf.lng = pos.coords.longitude;
-            // console.log(mySelf);
-
-            console.warn('Your current position is:');
-            // console.log('Latitude : ' + this.latHome);
-            // console.log('Longitude: ' + this.lngHome);
-            // console.log('More or less ' + crd.accuracy + ' meters.');
-            // console.log('mySelf:',mySelf);
-
-            this._markers.push(mySelf);
-
-            console.log('this._markers:', this._markers);
+        let myPosition;
+        navigator.geolocation.getCurrentPosition((pos) => {
+            myPosition = {lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'Me'};
+            this._myPos = myPosition;
+            this._lat = myPosition.lat;
+            this._lng = myPosition.lng;
+        })
+    }
 
 
-        }
+    // let directionsDisplay = new google.maps.DirectionsRenderer();
+    // console.log('directionsDisplay: ',directionsDisplay);
+    // let directionsService = new google.maps.DirectionsService();
+    // console.log('directionsService: ',directionsService);
+    // let geocoder = new google.maps.Geocoder();
+    // console.log('geocoder: ',geocoder);
 
-        showError(error){
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("User denied the request for Geolocation");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Location information is unavailable");
-                    break;
-                case error.TIMEOUT:
-                    alert("The request to get user location timed out");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("An unknown error occurred");
-                    break;
-            }
-        }
 
-    calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
+    clickedMarker(label:string, index:number, directionsService, directionsDisplay, pointA) {
+        console.log(`clicked the marker: ${label && index}`);
         directionsService.route({
-                origin: pointA,
-                destination: pointB,
-                travelMode: google.maps.TravelMode.DRIVING
-            },function(response, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
+            origin: pointA,
+            //Need to check the json we receive from DB, might not match with googles request.
+            destination: this._markers[index],
+            travelMode: google.maps.TravelMode.DRIVING
+        }, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
                 directionsDisplay.setDirections(response);
             } else {
                 window.alert('Directions request failed due to ' + status);
@@ -258,19 +228,110 @@ export class MapComponent implements OnInit {
         });
     }
 
-
-
-        // autocomplete() {
-        //     this._loader.load().then(() => {
-        //         let autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocompleteInput"), {});
-        //         google.maps.event.addListener(autocomplete, 'place_changed', () => {
-        //             let place = autocomplete.getPlace();
-        //             console.log(place);
-        //         });
-        //     })};
-
-
+    mapClicked($event:MouseEvent) {
+        // this._markers.push({
+        //     lat: $event.coords.lat,
+        //     lng: $event.coords.lng,
+        //     isShown: true
+        // });
+        this.locAdded.emit($event.coords);
     }
+
+
+    markerDragEnd(m:marker, $event:MouseEvent) {
+        // console.log('dragEnd', m, $event);
+    }
+
+    showPosition(pos){
+        // let mySelf = {lat: 0, lng:0, isShown: true, label: 'Me', layerId: 'me'};
+        // mySelf.lat = pos.coords.latitude;
+        // mySelf.lng = pos.coords.longitude;
+        // this._markers.push(mySelf);
+    }
+    //
+    //
+    // }
+
+    showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred");
+                break;
+        }
+    }
+
+    calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
+        directionsService.route({
+            origin: pointA,
+            destination: pointB,
+            travelMode: google.maps.TravelMode.DRIVING
+        }, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+            } else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+
+    filterChanged(layer) {
+        // console.log('filterChanged',  layer);
+        // console.log('before' ,this._markers);
+        if (!layer.isShown) {
+            this._markers = this._markers.map((marker)=> {
+                if (marker.layerId === layer.id) {
+                    const newMarker = Object.assign({}, marker, {isShown: true});
+                    return newMarker;
+                } else {
+                    return marker;
+                }
+                ;
+            });
+            layer.isShown = !layer.ishown;
+            // console.log( 'after:',this._markers, layer);
+        } else {
+            this._markers = this._markers.map((marker)=> {
+                if (marker.layerId === layer.id) {
+                    const newMarker = Object.assign({}, marker, {isShown: false});
+                    return newMarker;
+                } else {
+                    return marker;
+                }
+                ;
+            });
+            layer.isShown = !layer.isShown;
+            // console.log( 'after:',this._markers, layer);
+        }
+    }
+
+    createMarkers(layer) {
+        layer.locs.forEach(loc => {
+            const marker = Object.assign({}, loc, {layerId: layer.id, symbol: layer.symbol, isShown: false});
+            this._markers.push(marker);
+        })
+    }
+
+
+    // autocomplete() {
+    //     this._loader.load().then(() => {
+    //         let autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocompleteInput"), {});
+    //         google.maps.event.addListener(autocomplete, 'place_changed', () => {
+    //             let place = autocomplete.getPlace();
+    //             console.log(place);
+    //         });
+    //     })};
+
+}
+
 // }
 
 

@@ -11,7 +11,7 @@ export class FilterByPipe implements PipeTransform {
     return list.filter(item=>{
       return item.name.toLowerCase()
               .indexOf(filter.byName.toLowerCase()) !== -1 &&
-             (!filter.sym || item.sym === filter.sym)
+          (!filter.sym || item.sym === filter.sym)
     })
   }
 }
