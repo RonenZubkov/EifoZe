@@ -41,9 +41,10 @@ declare let google:any;
     // bindings:[GeolocationService],
 
     template: `
+    <mapLayers [layers]="_layers" (onChange)="filterChanged($event)">map layers</mapLayers>
     <sebm-google-map 
-      [latitude]="lat"
-      [longitude]="lng"
+      [latitude]="_lat"
+      [longitude]="_lng"
       [zoom]="zoom"
       [disableDefaultUI]="false"
       [zoomControl]="false"
@@ -106,6 +107,7 @@ export class MapComponent implements OnInit {
     state:boolean = false;
     // google maps zoom level
     zoom:number = 18;
+    @Output() private locAdded = new EventEmitter;
 
     // initial center position for the map
     private mySelf$:any;
@@ -114,10 +116,9 @@ export class MapComponent implements OnInit {
     private _lng:number = 0;
 
 
-    lat:number = 32.087289
+    lat:number = 32.087289;
     lng:number = 34.803521;
 
-    @Output() private locAdded = new EventEmitter;
     private _layers:LayerModel[];
     private _markers:marker[] = [];
     private _myPos:marker;
@@ -126,22 +127,22 @@ export class MapComponent implements OnInit {
     constructor(geolocationService:GeolocationService, private _wrapper:GoogleMapsAPIWrapper, private _zone:NgZone, _markerManger:MarkerManager, private layerService:LayerService, private _loader:MapsAPILoader) {
         this._wrapper.getNativeMap().then((m) => {
             let options = {
-                // center: {lat: this._latitude, lng: this._longitude},
+        //         // center: {lat: this._latitude, lng: this._longitude},
                 minZoom: 2, maxZoom: 15,
                 disableDefaultUI: true,
                 draggable: false,
                 disableDoubleClickZoom: false,
                 panControl: false,
-                scaleControl: true
+                scaleControl: false,
             };
             m.setOptions(options);
         });
 
-        this.mySelf$ = geolocationService.getLocation({maximumAge: 600000, timeout: 5000, enableHighAccuracy: true})
-        // console.log(geolocationService)
-            .subscribe(res => this.mySelf$ = res);
-
-        console.log(this.mySelf$);
+        // this.mySelf$ = geolocationService.getLocation({maximumAge: 600000, timeout: 5000, enableHighAccuracy: true})
+        // // console.log(geolocationService)
+        //     .subscribe(res => console.log(res));
+        // // (this.mySelf$ = res)
+        // console.log(this.mySelf$);
     }
 
 
@@ -238,6 +239,17 @@ export class MapComponent implements OnInit {
     }
 
 
+        //If there is an error about zone js || or you cant move the map, the error comes from here.(R.z)
+
+    createMarkers(layer) {
+        layer.locs.forEach(loc => {
+            console.log(loc);
+            const marker = Object.assign({}, loc, {layerId: layer.id , symbol : layer.symbol, isShown: false });
+            console.log(marker);
+            this._markers.push(marker);
+        })
+    }
+
     markerDragEnd(m:marker, $event:MouseEvent) {
         // console.log('dragEnd', m, $event);
     }
@@ -270,17 +282,17 @@ export class MapComponent implements OnInit {
     }
 
     calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
-        directionsService.route({
-            origin: pointA,
-            destination: pointB,
-            travelMode: google.maps.TravelMode.DRIVING
-        }, function (response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-                directionsDisplay.setDirections(response);
-            } else {
-                window.alert('Directions request failed due to ' + status);
-            }
-        });
+        // directionsService.route({
+        //     origin: pointA,
+        //     destination: pointB,
+        //     travelMode: google.maps.TravelMode.DRIVING
+        // }, function (response, status) {
+        //     if (status == google.maps.DirectionsStatus.OK) {
+        //         directionsDisplay.setDirections(response);
+        //     } else {
+        //         window.alert('Directions request failed due to ' + status);
+        //     }
+        // });
     }
 
     filterChanged(layer) {
@@ -294,7 +306,6 @@ export class MapComponent implements OnInit {
                 } else {
                     return marker;
                 }
-                ;
             });
             layer.isShown = !layer.ishown;
             // console.log( 'after:',this._markers, layer);
@@ -313,12 +324,6 @@ export class MapComponent implements OnInit {
         }
     }
 
-    createMarkers(layer) {
-        layer.locs.forEach(loc => {
-            const marker = Object.assign({}, loc, {layerId: layer.id, symbol: layer.symbol, isShown: false});
-            this._markers.push(marker);
-        })
-    }
 
 
     // autocomplete() {
